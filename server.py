@@ -18,6 +18,15 @@ def serve_static(filename):
     if filename.endswith('.mjs'):
         response.headers['Content-Type'] = 'application/javascript; charset=utf-8; module'
     return response
+
+@app.route('/static/js/modules/<path:filepath>')
+def serve_static_modules(filepath):
+    print(filepath)
+    response = make_response(send_from_directory('static/js/modules', filepath))
+    if filepath.endswith('.mjs'):
+        response.headers['Content-Type'] = 'application/javascript; charset=utf-8; module'
+    return response
+
 '''
 # API endpoint to get the list of files
 @app.route('/get_files')

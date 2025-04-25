@@ -1,0 +1,35 @@
+#keys {
+    position: relative;
+    /* Change from absolute to relative positioning */
+    max-width: 721px;
+    margin-top: 20px;
+    /* Add margin-top to create space between containers */
+}
+
+
+
+#controller-panel {
+    position: absolute;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 10px;
+    outline: auto;
+}
+
+.whitenote {
+    height: 100%;
+    width: 50px;
+    background: white;
+    float: left;
+    border-right: 1px solid black;
+    position: relative;
+}
+
+.blacknote {
+    position: absolute;
+    height: 65%;
+    width: 55%;
+    z-index: 1;
+    background: #292929;
+    left: 68%;
+}
