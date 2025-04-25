@@ -6,6 +6,7 @@ function buildKeys() {
         for (var i = 0; i < notes.length; i++) {
             var hasSharp = true;
             var note = notes[i];
+            console.log(note);
             //tests if note has accomanying sharp
             if (note == 'E' || note == 'B') {
                 hasSharp = false;
