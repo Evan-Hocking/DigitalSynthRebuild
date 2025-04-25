@@ -1,4 +1,4 @@
-#keys {
+#controller-panel {
     position: relative;
     /* Change from absolute to relative positioning */
     max-width: 721px;
@@ -8,7 +8,7 @@
 
 
 
-#controller-panel {
+#keys {
     position: absolute;
     height: 200px;
     overflow: hidden;

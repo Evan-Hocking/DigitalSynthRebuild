@@ -2,7 +2,7 @@
 <head>
     <link rel="stylesheet" type="text/css" href="static/css/style.css" />
     <title>Open Synth</title>
-    <script src="static/js/modules/controllers/oscillator/oscillator.mjs"></script>
+    <!-- <script src="static/js/modules/controllers/oscillator/oscillator.mjs"></script> -->
 
 </head>
 
@@ -13,12 +13,15 @@
 
 </div>
 
-<div id="keys"></div>
+
 <div id="controller-panel">
 
 </div>
-</div>
+
 <div id="scripts">
+    {% for script in script_files %}
+        <script src="static/{{ script }}"></script>
+    {% endfor %}
 <script type="module" src="static/js/script.mjs"></script>
 </div>
 
