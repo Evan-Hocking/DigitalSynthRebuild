@@ -1,9 +1,14 @@
-const serverUrl = window.location.origin;
-const ctx = new (window.AudioContext || window.webkitAudioContext)();
-const sampleRate = ctx.sampleRate;
-
+let ctx = null;
 let activeKey = null;
 let activeFrequency = null;
+
+let activeSource = null;
+let oscillatorGain = null;
+
+
+
+
+
 const activeKeys = []
 const keyNoteMapping = {
     'tab': 'C4',
@@ -33,10 +38,67 @@ const keyNoteMapping = {
 
     // Add more keys as needed
 };
+export function init(audioctx) {
+    ctx = audioctx;
+    activeSource = ctx.createOscillator();
+    oscillatorGain = ctx.createGain();
+    oscillatorGain.gain.value = 0;
+    activeSource.connect(oscillatorGain);
+    buildUI();
+    return oscillatorGain;
+}
+function buildUI() {
+    // Create the controller panel
+    var modulePanel = document.getElementById('module-panel');
+    var oscilattorControls = document.createElement('div');
+    oscilattorControls.id = 'oscillator-controls';
+    oscilattorControls.className = 'module';
+    modulePanel.appendChild(oscilattorControls);
+    var moduleTitle = document.createElement('h2');
+    moduleTitle.innerHTML = 'Oscillator';
+    oscilattorControls.appendChild(moduleTitle);
 
+
+    var WaveformSelect = document.createElement('select');
+    WaveformSelect.id = 'waveform-select';
+    var waveforms = ['sine', 'square', 'sawtooth', 'triangle'];
+    waveforms.forEach(function (waveform) {
+        var option = document.createElement('option');
+        option.value = waveform;
+        option.text = waveform.charAt(0).toUpperCase() + waveform.slice(1);
+        WaveformSelect.appendChild(option);
+    });
+    WaveformSelect.addEventListener('change', function (event) {
+        const selectedWaveform = event.target.value;
+        activeSource.type = selectedWaveform;
+        WaveformSelect.blur()
+    });
+    oscilattorControls.appendChild(WaveformSelect);
+    var WaveformLabel = document.createElement('label');
+    WaveformLabel.innerHTML = 'Waveform';
+    WaveformLabel.setAttribute('for', 'waveform-select');
+    oscilattorControls.appendChild(WaveformLabel);
+
+
+    var gain = document.createElement('input');
+    gain.type = 'range';
+    gain.id = 'oscillator-gain';
+    gain.min = 0;
+    gain.max = 100;
+    gain.value = 50;
+    oscilattorControls.appendChild(gain);
+    var gainLabel = document.createElement('label');
+    gainLabel.innerHTML = 'Gain';
+    gainLabel.setAttribute('for', 'gain');
+    oscilattorControls.appendChild(gainLabel);
+
+    buildKeys();
+}
 function buildKeys() {
     var notes = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
     var controllerPanel = document.getElementById('controller-panel');
+
+
     var keys = document.createElement('div');
     keys.id = 'keys';
 
@@ -52,31 +114,43 @@ function buildKeys() {
                 hasSharp = false;
             }
             //generates white note
-            whitekey = document.createElement('div');
+            var whitekey = document.createElement('div');
             whitekey.className = 'whitenote';
             whitekey.dataset.note = note + (octave + 4);
             whitekey.id = note + (octave + 4);
-            
+
+            whitekey.addEventListener('mousedown', function (event) {
+                noteDown(this.dataset.note, this.dataset.note.includes('#'));
+            });
+            whitekey.addEventListener('mouseup', function (event) {
+                noteUp(this.dataset.note, this.dataset.note.includes('#'));
+            });
+            whitekey.addEventListener('mouseout', function (event) {
+                noteUp(this.dataset.note, this.dataset.note.includes('#'));
+            });
 
 
-            // html += `<div class='whitenote'
-            // data-note='${note + (octave + 4)}' id = '${note + (octave + 4)}'>`;
-            
-            
+
             //generates black note
             if (hasSharp) {
-                blackkey = document.createElement('div');
+                var blackkey = document.createElement('div');
                 blackkey.className = 'blacknote';
                 blackkey.dataset.note = note + '#' + (octave + 4);
                 blackkey.id = note + '#' + (octave + 4);
+
+                blackkey.addEventListener('mousedown', function (event) {
+                    noteDown(this.dataset.note, this.dataset.note.includes('#'));
+                });
+                blackkey.addEventListener('mouseup', function (event) {
+                    noteUp(this.dataset.note, this.dataset.note.includes('#'));
+                });
+                blackkey.addEventListener('mouseout', function (event) {
+                    noteUp(this.dataset.note, this.dataset.note.includes('#'));
+                });
+
                 whitekey.appendChild(blackkey);
-
-
-            //     html += `<div class='blacknote'
-
-            // data-note='${note + '#' + (octave + 4)}' id = '${note + '#' + (octave + 4)}'></div>`;
             }
-            // html += '</div>';
+
             keys.appendChild(whitekey);
         }
     }
@@ -84,11 +158,9 @@ function buildKeys() {
     // document.getElementById('controller-panel').innerHTML = html;
     controllerPanel.appendChild(keys);
 
-    
+
 
 }
-buildKeys()
-
 
 
 
@@ -134,12 +206,17 @@ document.addEventListener('keyup', function (event) {
         noteUp(note, "1234567890-=backspace`".includes(keyReleased) && keyReleased != "p" && keyReleased != "e");
     }
     //restarts original note if simultaneous notes played
-    // if (activeKeys) {
-    //     noteDown(keyNoteMapping[activeKeys[0]],)
-    // }
+
 });
 
 // #endregion
+
+
+
+
+
+
+
 
 function noteToMIDI(noteName) {
     const noteMap = {
@@ -165,18 +242,16 @@ function noteToMIDI(noteName) {
 }
 
 function noteUp(note, isSharp) {
-  
+
     const elem = document.querySelector(`[data-note="${note}"]`);
     elem.style.background = isSharp ? '#292929' : 'white';
-    
+
     if (activeKeys[0]) {
         noteDown(keyNoteMapping[activeKeys[activeKeys.length - 1]],)
     } else {
         var now = ctx.currentTime;
-        
-        activeSource.stop(now)
-        activeSource.disconnect();
-        
+
+        oscillatorGain.gain.value = 0;
     }
 
 
@@ -184,7 +259,7 @@ function noteUp(note, isSharp) {
 
 //controls behaviour for when a note is pressed
 function noteDown(note, isSharp) {
-   
+
     const elem = document.querySelector(`[data-note="${note}"]`);
     if (elem) {
         event.stopPropagation();
@@ -195,7 +270,7 @@ function noteDown(note, isSharp) {
         // Play the sound with the current gain
         playSound(frequency);
     }
-    
+
 }
 
 function getFrequency(midiValue) {
@@ -204,34 +279,14 @@ function getFrequency(midiValue) {
 
 
 function playSound(frequency) {
-    let activeSource = ctx.createOscillator();
-    activeSource.connect(ctx.destination);
+    oscillatorGain.gain.value = document.getElementById('oscillator-gain').value / 20;
+    if (activeFrequency) {
 
-    // if (activeFrequency) {
-    //     activeSource.frequency.setValueAtTime(frequency, ctx.currentTime);
-    // } else {
-        // const nodeKeys = Object.keys(activeFilters);
-        // const filterKeys = nodeKeys.map(str => str.replace(/\d+$/, ''));
-
-        // for (let i = 1; i < filterKeys.length; i++) {
-        //     availableFilters[filterKeys[i]].updateParam(activeFilters[nodeKeys[i]], nodeKeys[i], ctx)
-
-        // }
-        // Create an oscillator node
-        // const osc = ctx.createOscillator();
-        // activeSource.type = document.getElementById("waveform").value
-        console.log(frequency)
+        activeSource.frequency.setValueAtTime(frequency, ctx.currentTime);
+    } else {
         activeSource.frequency.value = frequency
-        // Start and stop the oscillator after a short duration (adjust as needed)
-
-        activeFrequency = frequency;
         activeSource.start();
 
-
-
-        // Store the active source
-        // activeSource = osc;
-    // }
-    
-
+    }
+    activeFrequency = frequency;
 }

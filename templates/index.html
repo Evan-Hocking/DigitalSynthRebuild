@@ -2,14 +2,15 @@
 <head>
     <link rel="stylesheet" type="text/css" href="static/css/style.css" />
     <title>Open Synth</title>
-    <!-- <script src="static/js/modules/controllers/oscillator/oscillator.mjs"></script> -->
+    <link rel="icon" type="image/x-icon" href="static/image/icons/keybord_keys_piano_icon_123891.ico">
+
 
 </head>
 
 <body>
 <h1>Open Synth</h1>
 
-<div id="module-controller">
+<div id="module-panel">
 
 </div>
 
@@ -18,11 +19,7 @@
 
 </div>
 
-<div id="scripts">
-    {% for script in script_files %}
-        <script src="static/{{ script }}"></script>
-    {% endfor %}
 <script type="module" src="static/js/script.mjs"></script>
-</div>
+
 
 </body>
