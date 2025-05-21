@@ -117,7 +117,7 @@ function buildUI() {
     });
     selectConnection.addEventListener('change', function (event) {
         const selectedNode = event.target.value;
-        const selectedNodeValue = activeNodes[selectedNode];
+        const selectedNodeValue = activeNodes[selectedNode]['node'];
         console.log('active nodes:', activeNodes);
         console.log('Selected node:', selectedNode);
         console.log('Selected node Value:', selectedNodeValue);

@@ -26,8 +26,8 @@ async function importModules(paths) {
             }
         }
         
-    }); 
-    moduleDictionary['Output'] = ctx.destination
+    });
+    moduleDictionary['Output'] = {'node':ctx.destination}
     console.log('ModuleDictionary:', moduleDictionary);
 
     Object.values(moduleDictionary).forEach(module => {
