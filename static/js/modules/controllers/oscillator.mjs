@@ -1,12 +1,25 @@
-let ctx = null;
+import { ctx } from '../../script.mjs';
 let activeKey = null;
 let activeFrequency = null;
 
 let activeSource = null;
 let oscillatorGain = null;
 
+let activeNodes = {};
 
-
+export function updateActiveNodes(Nodes){
+    activeNodes = Nodes;
+    var selectConnection = document.getElementById('osc-connection');
+    var options = Object.keys(activeNodes);
+    removeOptions(selectConnection);
+    options.forEach(function (option) {
+        var opt = document.createElement('option');
+        opt.value = option;
+        opt.text = option.charAt(0).toUpperCase() + option.slice(1);
+        selectConnection.appendChild(opt);
+    });
+    
+}
 
 
 const activeKeys = []
@@ -38,8 +51,9 @@ const keyNoteMapping = {
 
     // Add more keys as needed
 };
-export function init(audioctx) {
-    ctx = audioctx;
+export function init(Nodes) {
+
+    activeNodes = Nodes;
     activeSource = ctx.createOscillator();
     oscillatorGain = ctx.createGain();
     oscillatorGain.gain.value = 0;
@@ -91,6 +105,27 @@ function buildUI() {
     gainLabel.innerHTML = 'Gain';
     gainLabel.setAttribute('for', 'gain');
     oscilattorControls.appendChild(gainLabel);
+    
+    var selectConnection = document.createElement('select');
+    selectConnection.id = 'osc-connection';
+    var options = Object.keys(activeNodes);
+    options.forEach(function (option) {
+        var opt = document.createElement('option');
+        opt.value = option;
+        opt.text = option.charAt(0).toUpperCase() + option.slice(1);
+        selectConnection.appendChild(opt);
+    });
+    selectConnection.addEventListener('change', function (event) {
+        const selectedNode = event.target.value;
+        const selectedNodeValue = activeNodes[selectedNode];
+        console.log('active nodes:', activeNodes);
+        console.log('Selected node:', selectedNode);
+        console.log('Selected node Value:', selectedNodeValue);
+        oscillatorGain.disconnect();
+        oscillatorGain.connect(selectedNodeValue);
+        selectConnection.blur()
+    });
+    oscilattorControls.appendChild(selectConnection);
 
     buildKeys();
 }
@@ -289,4 +324,11 @@ function playSound(frequency) {
 
     }
     activeFrequency = frequency;
+}
+
+function removeOptions(selectElement) {
+   var i, L = selectElement.options.length - 1;
+   for(i = L; i >= 0; i--) {
+      selectElement.remove(i);
+   }
 }

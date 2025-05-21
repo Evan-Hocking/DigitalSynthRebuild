@@ -1,5 +1,6 @@
 const serverUrl = window.location.origin;
-const ctx = new (window.AudioContext || window.webkitAudioContext)();
+export const ctx = new (window.AudioContext || window.webkitAudioContext)();
+console.log(serverUrl)
 
 let activeModules = [];
 
@@ -19,29 +20,27 @@ async function importModules(paths) {
     modules.forEach((module, index) => {
         const moduleName = paths[index].split('/').pop().split('.')[0]; // Extract module name from path
         if (module.init) {
-            activeModules.push(module.init(ctx));
+           moduleDictionary[moduleName] = {
+            'jsModule': module,
+            'node': module.init(moduleDictionary)
+            }
         }
-        moduleDictionary[moduleName] = module;
+        
     });
-    console.log('Module dictionary:', moduleDictionary);
+    moduleDictionary['Output'] = ctx.destination
+    console.log('ModuleDictionary:', moduleDictionary);
 
-    console.log('Active modules:', activeModules);
-    // for (let i = 0; i < activeModules.length - 1; i++) {
-    //     const currentNode = activeModules[i];
-    //     const nextNode = activeModules[i + 1];
-    //     currentNode.connect(nextNode);
-
-    // }
-
-
-    // // Connect the last element in the chain to the destination
-    // const lastNode = activeModules[activeModules.length - 1];
-
-    // lastNode.connect(ctx.destination);
+    Object.values(moduleDictionary).forEach(module => {
+        
+        if (module.updateActiveNodes) {
+            module.updateActiveNodes(moduleDictionary);
+            console.log('updated');
+        }
+    });
 
 
-    activeModules[1].connect(activeModules[0]);
-    activeModules[0].connect(ctx.destination);
+    // activeModules[1].connect(activeModules[0]);
+    // activeModules[0].connect(ctx.destination);
 }
 
 

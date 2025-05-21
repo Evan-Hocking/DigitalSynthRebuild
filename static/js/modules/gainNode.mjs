@@ -1,11 +1,36 @@
-export function init(ctx){
+let activeNodes = {};
+import { ctx } from '../script.mjs';
+export function init(Nodes){
     let gainNode = ctx.createGain();
-    buildUI(ctx, gainNode);
+    activeNodes = Nodes;
+    console.log('Active nodes:', activeNodes);
+    buildUI(gainNode);
     
     return gainNode;
 }
 
-function buildUI(ctx, gainNode){
+function removeOptions(selectElement) {
+   var i, L = selectElement.options.length - 1;
+   for(i = L; i >= 0; i--) {
+      selectElement.remove(i);
+   }
+}
+
+export function updateActiveNodes(Nodes){
+    activeNodes = Nodes;
+    var selectConnection = document.getElementById('gain-connection');
+    var options = Object.keys(activeNodes);
+    removeOptions(selectConnection);
+    options.forEach(function (option) {
+        var opt = document.createElement('option');
+        opt.value = option;
+        opt.text = option.charAt(0).toUpperCase() + option.slice(1);
+        selectConnection.appendChild(opt);
+    });
+    
+}
+
+function buildUI(gainNode){
     var modulePanel = document.getElementById('module-panel');
     var GainControls = document.createElement('div');
     GainControls.id = 'Gain-Controls';
@@ -31,4 +56,34 @@ function buildUI(ctx, gainNode){
     gainLabel.innerHTML = 'Gain';
     gainLabel.setAttribute('for', 'gain');
     GainControls.appendChild(gainLabel);
+
+
+    var selectConnection = document.createElement('select');
+    selectConnection.id = 'gain-connection';
+    var options = Object.keys(activeNodes);
+    options.forEach(function (option) {
+        var opt = document.createElement('option');
+        opt.value = option;
+        opt.text = option.charAt(0).toUpperCase() + option.slice(1);
+        selectConnection.appendChild(opt);
+    });
+    selectConnection.addEventListener('change', function (event) {
+        const selectedNode = event.target.value;
+        const selectedNodeValue = activeNodes[selectedNode];
+        console.log('active nodes:', activeNodes);
+        console.log('Selected node:', selectedNode);
+        console.log('Selected node Value:', selectedNodeValue);
+        gainNode.disconnect();
+        gainNode.connect(selectedNodeValue);
+        selectConnection.blur()
+    });
+    GainControls.appendChild(selectConnection);
+    var selectConnectionLabel = document.createElement('label');
+    selectConnectionLabel.innerHTML = 'Connect to';
+    selectConnectionLabel.setAttribute('for', 'gain-connection');
+    GainControls.appendChild(selectConnectionLabel);
+    
+
+
+
 }
