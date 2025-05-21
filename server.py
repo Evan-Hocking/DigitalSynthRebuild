@@ -59,11 +59,7 @@ def serve_static_modules(filepath):
         response.headers['Content-Type'] = 'application/javascript; charset=utf-8; module'
     return response
 
-@app.route('/static/js/script.mjs')
-def serve_script():
-    response = make_response(send_from_directory('static/js', 'script.mjs'))
-    response.headers['Content-Type'] = 'application/javascript; charset=utf-8; module'
-    return response
+
 
 '''
 # API endpoint to get the list of files
