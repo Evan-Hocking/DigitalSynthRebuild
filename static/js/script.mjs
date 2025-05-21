@@ -26,7 +26,7 @@ async function importModules(paths) {
             }
         }
         
-    });
+    }); 
     moduleDictionary['Output'] = ctx.destination
     console.log('ModuleDictionary:', moduleDictionary);
 
