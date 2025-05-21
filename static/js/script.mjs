@@ -30,17 +30,13 @@ async function importModules(paths) {
     moduleDictionary['Output'] = {'node':ctx.destination}
     console.log('ModuleDictionary:', moduleDictionary);
 
-    Object.values(moduleDictionary).forEach(module => {
-        
-        if (module.updateActiveNodes) {
-            module.updateActiveNodes(moduleDictionary);
-            console.log('updated');
-        }
-    });
-
-
-    // activeModules[1].connect(activeModules[0]);
-    // activeModules[0].connect(ctx.destination);
+    Object.values(moduleDictionary).forEach(entry => {
+    const module = entry.jsModule;
+    if (module && module.updateActiveNodes) {
+        module.updateActiveNodes(moduleDictionary);
+        console.log('updated');
+    }
+});
 }
 
 

@@ -18,6 +18,7 @@ function removeOptions(selectElement) {
 
 export function updateActiveNodes(Nodes){
     activeNodes = Nodes;
+    console.log('Active nodes:', activeNodes);
     var selectConnection = document.getElementById('gain-connection');
     var options = Object.keys(activeNodes);
     removeOptions(selectConnection);
