@@ -33,3 +33,9 @@
     background: #292929;
     left: 68%;
 }
+
+.module {
+    position: relative;
+    background: #e6e6e6;
+    border-radius: 10px;
+}
