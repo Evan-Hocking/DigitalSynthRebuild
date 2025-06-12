@@ -22,6 +22,12 @@ export function updateActiveNodes(Nodes){
     var selectConnection = document.getElementById('gain-connection');
     var options = Object.keys(activeNodes);
     removeOptions(selectConnection);
+    var opt = document.createElement('option');
+    opt.value = '';
+    opt.disabled = true;
+    opt.selected = true;
+    opt.text = 'Select';
+    selectConnection.appendChild(opt);
     options.forEach(function (option) {
         var opt = document.createElement('option');
         opt.value = option;
@@ -62,8 +68,14 @@ function buildUI(gainNode){
     var selectConnection = document.createElement('select');
     selectConnection.id = 'gain-connection';
     var options = Object.keys(activeNodes);
+    var opt = document.createElement('option');
+    opt.value = '';
+    opt.disabled = true;
+    opt.selected = true;
+    opt.text = 'Select';
+    selectConnection.appendChild(opt);
     options.forEach(function (option) {
-        var opt = document.createElement('option');
+        opt = document.createElement('option');
         opt.value = option;
         opt.text = option.charAt(0).toUpperCase() + option.slice(1);
         selectConnection.appendChild(opt);

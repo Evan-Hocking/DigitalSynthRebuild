@@ -39,3 +39,26 @@
     background: #e6e6e6;
     border-radius: 10px;
 }
+
+#module-panel .module {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#module-panel {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+#add-module {
+    width: 150px;
+    /* Sets a specific width for the add module section */
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    /* Adds space between elements within the add module section */
+}

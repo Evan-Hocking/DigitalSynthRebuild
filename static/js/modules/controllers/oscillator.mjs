@@ -12,6 +12,12 @@ export function updateActiveNodes(Nodes){
     var selectConnection = document.getElementById('osc-connection');
     var options = Object.keys(activeNodes);
     removeOptions(selectConnection);
+    var opt = document.createElement('option');
+    opt.value = '';
+    opt.disabled = true;
+    opt.selected = true;
+    opt.text = 'Select';
+    selectConnection.appendChild(opt);
     options.forEach(function (option) {
         var opt = document.createElement('option');
         opt.value = option;
@@ -109,6 +115,12 @@ function buildUI() {
     var selectConnection = document.createElement('select');
     selectConnection.id = 'osc-connection';
     var options = Object.keys(activeNodes);
+    var opt = document.createElement('option');
+    opt.value = '';
+    opt.disabled = true;
+    opt.selected = true;
+    opt.text = 'Select';
+    selectConnection.appendChild(opt);
     options.forEach(function (option) {
         var opt = document.createElement('option');
         opt.value = option;

@@ -2,8 +2,10 @@ const serverUrl = window.location.origin;
 export const ctx = new (window.AudioContext || window.webkitAudioContext)();
 console.log(serverUrl)
 
-let activeModules = [];
 
+const moduleDictionary = {};
+const activeModules = {};
+activeModules['Output'] = { 'node': ctx.destination }
 async function fetchModulePaths() {
     const response = await fetch('/get_module_paths');
     const paths = await response.json();
@@ -15,28 +17,35 @@ async function importModules(paths) {
     const modulePromises = paths.map(path => import(path));
     const modules = await Promise.all(modulePromises);
 
-    const moduleDictionary = {};
+
 
     modules.forEach((module, index) => {
         const moduleName = paths[index].split('/').pop().split('.')[0]; // Extract module name from path
-        if (module.init) {
-           moduleDictionary[moduleName] = {
-            'jsModule': module,
-            'node': module.init(moduleDictionary)
-            }
-        }
-        
+        moduleDictionary[moduleName] = module;
     });
-    moduleDictionary['Output'] = {'node':ctx.destination}
-    console.log('ModuleDictionary:', moduleDictionary);
 
-    Object.values(moduleDictionary).forEach(entry => {
-    const module = entry.jsModule;
-    if (module && module.updateActiveNodes) {
-        module.updateActiveNodes(moduleDictionary);
-        console.log('updated');
-    }
-});
+    // modules.forEach((module, index) => {
+    //     const moduleName = paths[index].split('/').pop().split('.')[0]; // Extract module name from path
+    //     if (module.init) {
+    //         activeModules[moduleName] = {
+    //             'jsModule': module,
+    //             'node': module.init(activeModules)
+    //         }
+    //     }
+
+    // });
+
+
+
+
+    var moduleSelect = document.getElementById('module-select');
+    var options = Object.keys(moduleDictionary);
+    options.forEach(function (option) {
+        var opt = document.createElement('option');
+        opt.value = option;
+        opt.text = option.charAt(0).toUpperCase() + option.slice(1);
+        moduleSelect.appendChild(opt);
+    });
 }
 
 
@@ -46,4 +55,23 @@ async function importModules(paths) {
 fetchModulePaths().then(paths => {
     importModules(paths);
     console.log('Modules loaded:', paths);
+});
+
+document.getElementById('add-module-button').addEventListener('click', function () {
+    const selectedKey = document.getElementById('module-select').value;
+    const selectedModule = moduleDictionary[selectedKey];
+    if (selectedModule && selectedModule.init) {
+        activeModules[selectedKey] = {
+            'jsModule': selectedModule,
+            'node': selectedModule.init(activeModules)
+        }
+
+    }
+    Object.values(activeModules).forEach(entry => {
+        const module = entry.jsModule;
+        if (module && module.updateActiveNodes) {
+            module.updateActiveNodes(activeModules);
+            console.log('updated');
+        }
+    });
 });
