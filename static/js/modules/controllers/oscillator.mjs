@@ -7,7 +7,7 @@ let oscillatorGain = null;
 
 let activeNodes = {};
 
-export function updateActiveNodes(Nodes){
+export function updateActiveNodes(Nodes) {
     activeNodes = Nodes;
     var selectConnection = document.getElementById('osc-connection');
     var options = Object.keys(activeNodes);
@@ -24,7 +24,7 @@ export function updateActiveNodes(Nodes){
         opt.text = option.charAt(0).toUpperCase() + option.slice(1);
         selectConnection.appendChild(opt);
     });
-    
+
 }
 
 
@@ -111,7 +111,7 @@ function buildUI() {
     gainLabel.innerHTML = 'Gain';
     gainLabel.setAttribute('for', 'gain');
     oscilattorControls.appendChild(gainLabel);
-    
+
     var selectConnection = document.createElement('select');
     selectConnection.id = 'osc-connection';
     var options = Object.keys(activeNodes);
@@ -160,56 +160,38 @@ function buildKeys() {
             if (note == 'E' || note == 'B') {
                 hasSharp = false;
             }
+
             //generates white note
-            var whitekey = document.createElement('div');
-            whitekey.className = 'whitenote';
-            whitekey.dataset.note = note + (octave + 4);
-            whitekey.id = note + (octave + 4);
-
-            whitekey.addEventListener('mousedown', function (event) {
-                noteDown(this.dataset.note, this.dataset.note.includes('#'));
-            });
-            whitekey.addEventListener('mouseup', function (event) {
-                noteUp(this.dataset.note, this.dataset.note.includes('#'));
-            });
-            whitekey.addEventListener('mouseout', function (event) {
-                noteUp(this.dataset.note, this.dataset.note.includes('#'));
-            });
-
-
-
+            var whitekey = createKey("whitenote", note + (octave + 4))
             //generates black note
             if (hasSharp) {
-                var blackkey = document.createElement('div');
-                blackkey.className = 'blacknote';
-                blackkey.dataset.note = note + '#' + (octave + 4);
-                blackkey.id = note + '#' + (octave + 4);
-
-                blackkey.addEventListener('mousedown', function (event) {
-                    noteDown(this.dataset.note, this.dataset.note.includes('#'));
-                });
-                blackkey.addEventListener('mouseup', function (event) {
-                    noteUp(this.dataset.note, this.dataset.note.includes('#'));
-                });
-                blackkey.addEventListener('mouseout', function (event) {
-                    noteUp(this.dataset.note, this.dataset.note.includes('#'));
-                });
-
+                var blackkey = createKey("blacknote", note + '#' + (octave + 4))
                 whitekey.appendChild(blackkey);
             }
-
             keys.appendChild(whitekey);
         }
     }
-
     // document.getElementById('controller-panel').innerHTML = html;
     controllerPanel.appendChild(keys);
-
-
-
 }
 
+function createKey(keyClass, note) {
+    var key = document.createElement('div')
+    key.className = keyClass
+    key.dataset.note = note
+    key.id = note
 
+    key.addEventListener('mousedown', function (event) {
+        noteDown(this.dataset.note, this.dataset.note.includes('#'))
+    })
+    key.addEventListener('mouseup', function (event) {
+        noteUp(this.dataset.note, this.dataset.note.includes('#'))
+    })
+    key.addEventListener('mouseout', function (event) {
+        noteUp(this.dataset.note, this.dataset.note.includes('#'))
+    })
+    return key
+}
 
 
 // #region keyEventListeners
@@ -260,33 +242,6 @@ document.addEventListener('keyup', function (event) {
 
 
 
-
-
-
-
-
-function noteToMIDI(noteName) {
-    const noteMap = {
-        'C': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3, 'E': 4,
-        'F': 5, 'F#': 6, 'Gb': 6, 'G': 7, 'G#': 8, 'Ab': 8, 'A': 9,
-        'A#': 10, 'Bb': 10, 'B': 11
-    };
-
-    const match = noteName.match(/^([A-Ga-g#]+)([0-9]+)$/);
-    if (!match) {
-        throw new Error('Invalid note name format');
-    }
-
-    const note = match[1].toUpperCase();
-    const octave = parseInt(match[2]);
-
-    if (noteMap.hasOwnProperty(note)) {
-        // Calculate the MIDI note number based on A440 tuning.
-        return noteMap[note] + (octave + 1) * 12; // A440 = MIDI note 69
-    } else {
-        throw new Error('Invalid note name');
-    }
-}
 
 function noteUp(note, isSharp) {
 
@@ -339,8 +294,32 @@ function playSound(frequency) {
 }
 
 function removeOptions(selectElement) {
-   var i, L = selectElement.options.length - 1;
-   for(i = L; i >= 0; i--) {
-      selectElement.remove(i);
-   }
+    var i, L = selectElement.options.length - 1;
+    for (i = L; i >= 0; i--) {
+        selectElement.remove(i);
+    }
+}
+
+
+function noteToMIDI(noteName) {
+    const noteMap = {
+        'C': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3, 'E': 4,
+        'F': 5, 'F#': 6, 'Gb': 6, 'G': 7, 'G#': 8, 'Ab': 8, 'A': 9,
+        'A#': 10, 'Bb': 10, 'B': 11
+    };
+
+    const match = noteName.match(/^([A-Ga-g#]+)([0-9]+)$/);
+    if (!match) {
+        throw new Error('Invalid note name format');
+    }
+
+    const note = match[1].toUpperCase();
+    const octave = parseInt(match[2]);
+
+    if (noteMap.hasOwnProperty(note)) {
+        // Calculate the MIDI note number based on A440 tuning.
+        return noteMap[note] + (octave + 1) * 12; // A440 = MIDI note 69
+    } else {
+        throw new Error('Invalid note name');
+    }
 }
