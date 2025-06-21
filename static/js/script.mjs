@@ -20,7 +20,9 @@ async function importModules(paths) {
 
 
     modules.forEach((module, index) => {
-        const moduleName = paths[index].split('/').pop().split('.')[0]; // Extract module name from path
+        var moduleName = paths[index].split('/').pop().split('.')[0]; // Extract module name from path
+        console.log(moduleName)
+        moduleName = getTextAfterLastBackslash(moduleName)
         moduleDictionary[moduleName] = module;
     });
 
@@ -49,6 +51,11 @@ async function importModules(paths) {
 }
 
 
+function getTextAfterLastBackslash(path) {
+    const parts = path.split('\\');
+    return parts[parts.length - 1];
+}
+
 
 
 
@@ -59,6 +66,7 @@ fetchModulePaths().then(paths => {
 
 document.getElementById('add-module-button').addEventListener('click', function () {
     const selectedKey = document.getElementById('module-select').value;
+    console.log(selectedKey)
     const selectedModule = moduleDictionary[selectedKey];
     if (selectedModule && selectedModule.init) {
         activeModules[selectedKey] = {
