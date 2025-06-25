@@ -57,25 +57,25 @@ const keyNoteMapping = {
 
     // Add more keys as needed
 };
-export function init(Nodes) {
+export function init(Nodes, id) {
 
     activeNodes = Nodes;
     activeSource = ctx.createOscillator();
     oscillatorGain = ctx.createGain();
     oscillatorGain.gain.value = 0;
     activeSource.connect(oscillatorGain);
-    buildUI();
+    buildUI(id);
     return oscillatorGain;
 }
-function buildUI() {
+function buildUI(id) {
     // Create the controller panel
     var modulePanel = document.getElementById('module-panel');
     var oscilattorControls = document.createElement('div');
-    oscilattorControls.id = 'oscillator-controls';
+    oscilattorControls.id = id + '-controls';
     oscilattorControls.className = 'module';
     modulePanel.appendChild(oscilattorControls);
     var moduleTitle = document.createElement('h2');
-    moduleTitle.innerHTML = 'Oscillator';
+    moduleTitle.innerHTML = id;
     oscilattorControls.appendChild(moduleTitle);
 
 

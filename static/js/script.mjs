@@ -1,7 +1,7 @@
 const serverUrl = window.location.origin;
 export const ctx = new (window.AudioContext || window.webkitAudioContext)();
 console.log(serverUrl)
-
+var moduleCounter = 0;
 
 const moduleDictionary = {};
 const activeModules = {};
@@ -69,10 +69,11 @@ document.getElementById('add-module-button').addEventListener('click', function 
     console.log(selectedKey)
     const selectedModule = moduleDictionary[selectedKey];
     if (selectedModule && selectedModule.init) {
-        activeModules[selectedKey] = {
+        activeModules[selectedKey + moduleCounter] = {
             'jsModule': selectedModule,
-            'node': selectedModule.init(activeModules)
+            'node': selectedModule.init(activeModules,selectedKey + moduleCounter)
         }
+        moduleCounter +=1;
 
     }
     Object.values(activeModules).forEach(entry => {
