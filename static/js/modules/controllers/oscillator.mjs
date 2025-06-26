@@ -6,10 +6,11 @@ let activeSource = null;
 let oscillatorGain = null;
 
 let activeNodes = {};
+let id = null;
 
 export function updateActiveNodes(Nodes) {
     activeNodes = Nodes;
-    var selectConnection = document.getElementById('osc-connection');
+    var selectConnection = document.getElementById(id + '-connection');
     var options = Object.keys(activeNodes);
     removeOptions(selectConnection);
     var opt = document.createElement('option');
@@ -57,17 +58,18 @@ const keyNoteMapping = {
 
     // Add more keys as needed
 };
-export function init(Nodes, id) {
+export function init(Nodes, NodeID) {
 
     activeNodes = Nodes;
     activeSource = ctx.createOscillator();
     oscillatorGain = ctx.createGain();
     oscillatorGain.gain.value = 0;
     activeSource.connect(oscillatorGain);
-    buildUI(id);
+    id = NodeID
+    buildUI();
     return oscillatorGain;
 }
-function buildUI(id) {
+function buildUI() {
     // Create the controller panel
     var modulePanel = document.getElementById('module-panel');
     var oscilattorControls = document.createElement('div');
@@ -80,7 +82,7 @@ function buildUI(id) {
 
 
     var WaveformSelect = document.createElement('select');
-    WaveformSelect.id = 'waveform-select';
+    WaveformSelect.id = id+'-waveform-select';
     var waveforms = ['sine', 'square', 'sawtooth', 'triangle'];
     waveforms.forEach(function (waveform) {
         var option = document.createElement('option');
@@ -102,7 +104,7 @@ function buildUI(id) {
 
     var gain = document.createElement('input');
     gain.type = 'range';
-    gain.id = 'oscillator-gain';
+    gain.id = id + '-gain';
     gain.min = 0;
     gain.max = 100;
     gain.value = 50;
@@ -113,7 +115,7 @@ function buildUI(id) {
     oscilattorControls.appendChild(gainLabel);
 
     var selectConnection = document.createElement('select');
-    selectConnection.id = 'osc-connection';
+    selectConnection.id = id + '-connection';
     var options = Object.keys(activeNodes);
     var opt = document.createElement('option');
     opt.value = '';
@@ -281,7 +283,7 @@ function getFrequency(midiValue) {
 
 
 function playSound(frequency) {
-    oscillatorGain.gain.value = document.getElementById('oscillator-gain').value / 20;
+    oscillatorGain.gain.value = document.getElementById(id + '-gain').value / 20;
     if (activeFrequency) {
 
         activeSource.frequency.setValueAtTime(frequency, ctx.currentTime);
