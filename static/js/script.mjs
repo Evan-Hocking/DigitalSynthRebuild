@@ -67,7 +67,7 @@ fetchModulePaths().then(paths => {
 document.getElementById('add-module-button').addEventListener('click', function () {
     const selectedKey = document.getElementById('module-select').value;
     console.log(selectedKey)
-    const selectedModule = moduleDictionary[selectedKey];
+    const selectedModule = moduleDictionary[selectedKey + moduleCounter];
     if (selectedModule && selectedModule.init) {
         activeModules[selectedKey + moduleCounter] = {
             'jsModule': selectedModule,
