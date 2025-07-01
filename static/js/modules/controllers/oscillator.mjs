@@ -8,9 +8,10 @@ let oscillatorGain = null;
 let activeNodes = {};
 let id = null;
 
-export function updateActiveNodes(Nodes) {
+export function updateActiveNodes(Nodes, NodeID) {
     activeNodes = Nodes;
-    var selectConnection = document.getElementById(id + '-connection');
+    var selectConnection = document.getElementById(NodeID + '-connection');
+    console.log(selectConnection)
     var options = Object.keys(activeNodes);
     removeOptions(selectConnection);
     var opt = document.createElement('option');
@@ -66,23 +67,23 @@ export function init(Nodes, NodeID) {
     oscillatorGain.gain.value = 0;
     activeSource.connect(oscillatorGain);
     id = NodeID
-    buildUI();
+    buildUI(NodeID);
     return oscillatorGain;
 }
-function buildUI() {
+function buildUI(NodeID) {
     // Create the controller panel
     var modulePanel = document.getElementById('module-panel');
     var oscilattorControls = document.createElement('div');
-    oscilattorControls.id = id + '-controls';
+    oscilattorControls.id = NodeID + '-controls';
     oscilattorControls.className = 'module';
     modulePanel.appendChild(oscilattorControls);
     var moduleTitle = document.createElement('h2');
-    moduleTitle.innerHTML = id;
+    moduleTitle.innerHTML = NodeID;
     oscilattorControls.appendChild(moduleTitle);
 
 
     var WaveformSelect = document.createElement('select');
-    WaveformSelect.id = id+'-waveform-select';
+    WaveformSelect.id = NodeID+'-waveform-select';
     var waveforms = ['sine', 'square', 'sawtooth', 'triangle'];
     waveforms.forEach(function (waveform) {
         var option = document.createElement('option');
@@ -104,7 +105,7 @@ function buildUI() {
 
     var gain = document.createElement('input');
     gain.type = 'range';
-    gain.id = id + '-gain';
+    gain.id = NodeID + '-gain';
     gain.min = 0;
     gain.max = 100;
     gain.value = 50;
@@ -115,7 +116,7 @@ function buildUI() {
     oscilattorControls.appendChild(gainLabel);
 
     var selectConnection = document.createElement('select');
-    selectConnection.id = id + '-connection';
+    selectConnection.id = NodeID + '-connection';
     var options = Object.keys(activeNodes);
     var opt = document.createElement('option');
     opt.value = '';
@@ -150,7 +151,7 @@ function buildUI() {
     remove.addEventListener('click', function (event){
         oscilattorControls.remove()
         keys.remove()
-        removeActiveModule(id)
+        removeActiveModule(NodeID)
     })
     oscilattorControls.appendChild(remove)
 }

@@ -67,7 +67,7 @@ fetchModulePaths().then(paths => {
 document.getElementById('add-module-button').addEventListener('click', function () {
     const selectedKey = document.getElementById('module-select').value;
     console.log(selectedKey)
-    const selectedModule = moduleDictionary[selectedKey + moduleCounter];
+    const selectedModule = moduleDictionary[selectedKey];
     if (selectedModule && selectedModule.init) {
         activeModules[selectedKey + moduleCounter] = {
             'jsModule': selectedModule,
@@ -75,6 +75,7 @@ document.getElementById('add-module-button').addEventListener('click', function 
         }
         moduleCounter +=1;
         setActiveModules()
+        console.log(activeModules)
     }
     
 });
@@ -83,12 +84,14 @@ export function removeActiveModule(moduleKey){
     setActiveModules()
 }
 
-function setActiveModules(){
-    console.log(1)
-    Object.values(activeModules).forEach(entry => {
+
+function setActiveModules() {
+    console.log(1);
+    Object.entries(activeModules).forEach(([key, entry]) => {
+        console.log(key)
         const module = entry.jsModule;
         if (module && module.updateActiveNodes) {
-            module.updateActiveNodes(activeModules);
+            module.updateActiveNodes(activeModules, key);
             console.log('updated');
         }
     });
