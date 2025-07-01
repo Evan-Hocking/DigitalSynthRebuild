@@ -74,8 +74,17 @@ document.getElementById('add-module-button').addEventListener('click', function 
             'node': selectedModule.init(activeModules,selectedKey + moduleCounter)
         }
         moduleCounter +=1;
-
+        setActiveModules()
     }
+    
+});
+export function removeActiveModule(moduleKey){
+    delete activeModules[moduleKey]
+    setActiveModules()
+}
+
+function setActiveModules(){
+    console.log(1)
     Object.values(activeModules).forEach(entry => {
         const module = entry.jsModule;
         if (module && module.updateActiveNodes) {
@@ -83,4 +92,4 @@ document.getElementById('add-module-button').addEventListener('click', function 
             console.log('updated');
         }
     });
-});
+}

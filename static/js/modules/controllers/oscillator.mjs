@@ -1,4 +1,4 @@
-import { ctx } from '../../script.mjs';
+import { ctx, removeActiveModule } from '../../script.mjs';
 let activeKey = null;
 let activeFrequency = null;
 
@@ -141,11 +141,22 @@ function buildUI() {
     });
     oscilattorControls.appendChild(selectConnection);
 
-    buildKeys();
+    var keys = buildKeys();
+    var controllerPanel = document.getElementById('controller-panel');
+    controllerPanel.appendChild(keys);
+
+    var remove = document.createElement('button')
+    remove.innerHTML = "Remove"
+    remove.addEventListener('click', function (event){
+        oscilattorControls.remove()
+        keys.remove()
+        removeActiveModule(id)
+    })
+    oscilattorControls.appendChild(remove)
 }
 function buildKeys() {
     var notes = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
-    var controllerPanel = document.getElementById('controller-panel');
+    
 
 
     var keys = document.createElement('div');
@@ -174,7 +185,7 @@ function buildKeys() {
         }
     }
     // document.getElementById('controller-panel').innerHTML = html;
-    controllerPanel.appendChild(keys);
+    return keys
 }
 
 function createKey(keyClass, note) {
