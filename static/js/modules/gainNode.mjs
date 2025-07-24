@@ -99,7 +99,6 @@ function buildUI(gainNode,NodeID){
         remove.addEventListener('click', function (event){
             GainControls.remove()
             removeActiveModule(NodeID)
-            GainNode.disconnect()
         })
         GainControls.appendChild(remove)
 
