@@ -1,12 +1,12 @@
 let activeNodes = {};
 let id = null;
-import { ctx } from '../script.mjs';
+import { ctx, removeActiveModule } from '../script.mjs';
 export function init(Nodes,NodeID){
     let gainNode = ctx.createGain();
     activeNodes = Nodes;
     console.log('Active nodes:', activeNodes);
     id = NodeID
-    buildUI(gainNode);
+    buildUI(gainNode,NodeID);
     
     return gainNode;
 }
@@ -18,10 +18,10 @@ function removeOptions(selectElement) {
    }
 }
 
-export function updateActiveNodes(Nodes){
+export function updateActiveNodes(Nodes, NodeID){
     activeNodes = Nodes;
     console.log('Active nodes:', activeNodes);
-    var selectConnection = document.getElementById(id + '-connection');
+    var selectConnection = document.getElementById(NodeID + '-connection');
     var options = Object.keys(activeNodes);
     removeOptions(selectConnection);
     var opt = document.createElement('option');
@@ -39,7 +39,7 @@ export function updateActiveNodes(Nodes){
     
 }
 
-function buildUI(gainNode){
+function buildUI(gainNode,NodeID){
     var modulePanel = document.getElementById('module-panel');
     var GainControls = document.createElement('div');
     GainControls.id = id + '-Controls';
@@ -94,7 +94,14 @@ function buildUI(gainNode){
     selectConnectionLabel.innerHTML = 'Connect to';
     selectConnectionLabel.setAttribute('for', id + '-connection');
     GainControls.appendChild(selectConnectionLabel);
-    
+    var remove = document.createElement('button')
+        remove.innerHTML = "Remove"
+        remove.addEventListener('click', function (event){
+            GainControls.remove()
+            removeActiveModule(NodeID)
+            GainNode.disconnect()
+        })
+        GainControls.appendChild(remove)
 
 
 

@@ -142,7 +142,7 @@ function buildUI(NodeID) {
     });
     oscilattorControls.appendChild(selectConnection);
 
-    var keys = buildKeys();
+    var keys = buildKeys(NodeID);
     var controllerPanel = document.getElementById('controller-panel');
     controllerPanel.appendChild(keys);
 
@@ -155,13 +155,14 @@ function buildUI(NodeID) {
     })
     oscilattorControls.appendChild(remove)
 }
-function buildKeys() {
+function buildKeys(NodeID) {
     var notes = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
     
 
 
     var keys = document.createElement('div');
-    keys.id = 'keys';
+    keys.id = NodeID + 'keys';
+    keys.classList.add("keys")
 
 
     // var html = "";
