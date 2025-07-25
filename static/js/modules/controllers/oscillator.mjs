@@ -76,6 +76,7 @@ function buildUI(NodeID) {
     var oscilattorControls = document.createElement('div');
     oscilattorControls.id = NodeID + '-controls';
     oscilattorControls.className = 'module';
+    oscilattorControls.classList.add("module-box")
     modulePanel.appendChild(oscilattorControls);
     var moduleTitle = document.createElement('h2');
     moduleTitle.innerHTML = NodeID;
@@ -96,16 +97,19 @@ function buildUI(NodeID) {
         activeSource.type = selectedWaveform;
         WaveformSelect.blur()
     });
-    oscilattorControls.appendChild(WaveformSelect);
+    
     var WaveformLabel = document.createElement('label');
     WaveformLabel.innerHTML = 'Waveform';
     WaveformLabel.setAttribute('for', 'waveform-select');
     oscilattorControls.appendChild(WaveformLabel);
+    oscilattorControls.appendChild(WaveformSelect);
 
 
     var gain = document.createElement('input');
     gain.type = 'range';
     gain.id = NodeID + '-gain';
+    gain.setAttribute('orient', 'vertical');
+    gain.classList.add("vertical-slider")
     gain.min = 0;
     gain.max = 100;
     gain.value = 50;
@@ -140,6 +144,10 @@ function buildUI(NodeID) {
         oscillatorGain.connect(selectedNodeValue);
         selectConnection.blur()
     });
+    var selectConnectionLabel = document.createElement('label');
+    selectConnectionLabel.innerHTML = 'Connect to';
+    selectConnectionLabel.setAttribute('for', id + '-connection');
+    oscilattorControls.appendChild(selectConnectionLabel);
     oscilattorControls.appendChild(selectConnection);
 
     var keys = buildKeys(NodeID);
