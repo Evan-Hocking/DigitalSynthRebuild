@@ -43,13 +43,17 @@ function buildUI(gainNode,NodeID){
     var modulePanel = document.getElementById('module-panel');
     var GainControls = document.createElement('div');
     GainControls.id = id + '-Controls';
+    
     GainControls.className = 'module';
+    GainControls.classList.add("module-box")
     modulePanel.appendChild(GainControls);
     var moduleTitle = document.createElement('h2');
     moduleTitle.innerHTML = id;
     GainControls.appendChild(moduleTitle);
 
     var gain = document.createElement('input');
+    gain.classList.add("vertical-slider")
+    gain.setAttribute('orient', 'vertical');
     gain.type = 'range';
     gain.id = id;
     gain.min = 0;
@@ -89,11 +93,12 @@ function buildUI(gainNode,NodeID){
         gainNode.connect(selectedNodeValue);
         selectConnection.blur()
     });
-    GainControls.appendChild(selectConnection);
+    
     var selectConnectionLabel = document.createElement('label');
     selectConnectionLabel.innerHTML = 'Connect to';
     selectConnectionLabel.setAttribute('for', id + '-connection');
     GainControls.appendChild(selectConnectionLabel);
+    GainControls.appendChild(selectConnection);
     var remove = document.createElement('button')
         remove.innerHTML = "Remove"
         remove.addEventListener('click', function (event){
