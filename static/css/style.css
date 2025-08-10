@@ -1,3 +1,11 @@
+:root {
+    --node_background_colour:#e6e6e6;
+    --node_border: 1px solid #ccc;
+    --standard_note_bg_colour: white;
+    --standard_note_border: 1px solid black;
+    --sharp_note_bg_colour: #292929;
+}
+
 #controller-panel {
     position: relative;
     /* Change from absolute to relative positioning */
@@ -20,9 +28,9 @@
 .whitenote {
     height: 100%;
     width: 50px;
-    background: white;
+    background: var(--standard_note_bg_colour);
     float: left;
-    border-right: 1px solid black;
+    border-right: var(--standard_note_border);
     position: relative;
 }
 
@@ -31,22 +39,18 @@
     height: 65%;
     width: 55%;
     z-index: 1;
-    background: #292929;
+    background: var(--sharp_note_bg_colour);
     left: 68%;
 }
 
 .module {
     position: relative;
-    background: #e6e6e6;
+    background: var(--node_background_colour);
     border-radius: 10px;
-    border: 1px solid #ccc; /* optional, just to visualize the container */
+    border: var(--node_border);
     padding-left: 5px;
     padding-right: 5px;
     padding-bottom: 5px;
-
-    
-
-
     height: auto;         /* Important if parent tries to stretch it */
 }
 
@@ -74,10 +78,8 @@
 }
 
 .vertical-slider {
-    writing-mode: bt-lr;
-    /* IE */
-    -webkit-appearance: slider-vertical;
-    /* Chrome & Safari */
+    writing-mode: vertical-lr;
+    direction: rtl;
     width: 8px;
     height: 128px;
 }
@@ -86,9 +88,9 @@
     display: inline-flex;
     justify-content: center; /* center horizontally */
     align-items: center; /* center vertically */
-    background: #e6e6e6;
+    background: var(--node_background_colour);
     border-radius: 10px;
-    border: 1px solid #ccc; /* optional, just to visualize the container */
+    border: var(--node_border); 
     padding-left: 5px;
     padding-right: 5px;
     padding-bottom: 5px;

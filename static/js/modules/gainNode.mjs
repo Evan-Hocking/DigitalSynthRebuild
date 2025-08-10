@@ -1,11 +1,9 @@
 let activeNodes = {};
-let id = null;
 import { ctx, removeActiveModule } from '../script.mjs';
 export function init(Nodes,NodeID){
     let gainNode = ctx.createGain();
     activeNodes = Nodes;
     console.log('Active nodes:', activeNodes);
-    id = NodeID
     buildUI(gainNode,NodeID);
     
     return gainNode;
@@ -42,26 +40,27 @@ export function updateActiveNodes(Nodes, NodeID){
 function buildUI(gainNode,NodeID){
     var modulePanel = document.getElementById('module-panel');
     var GainControls = document.createElement('div');
-    GainControls.id = id + '-Controls';
+    GainControls.id = NodeID + '-Controls';
     
     GainControls.className = 'module';
     GainControls.classList.add("module-box")
     modulePanel.appendChild(GainControls);
     var moduleTitle = document.createElement('h2');
-    moduleTitle.innerHTML = id;
+    moduleTitle.innerHTML = NodeID;
     GainControls.appendChild(moduleTitle);
 
     var gain = document.createElement('input');
     gain.classList.add("vertical-slider")
     gain.setAttribute('orient', 'vertical');
     gain.type = 'range';
-    gain.id = id;
+    gain.id = NodeID;
     gain.min = 0;
     gain.max = 100;
     gain.value = 50;
     GainControls.appendChild(gain);
     gain.addEventListener('input', function (event) {
-        const gainValue = event.target.value / 20;
+        const gainModifer = 20; //divides result to keep gain in an appropriate range, can be configured to change the maximum possible gain -> MaxGain = 100/gainModifier
+        const gainValue = event.target.value / gainModifer;
         gainNode.gain.setValueAtTime(gainValue, ctx.currentTime);
         gain.blur()
     });
@@ -72,7 +71,7 @@ function buildUI(gainNode,NodeID){
 
 
     var selectConnection = document.createElement('select');
-    selectConnection.id = id + '-connection';
+    selectConnection.id = NodeID + '-connection';
     var options = Object.keys(activeNodes);
     var opt = document.createElement('option');
     opt.value = '';
@@ -96,7 +95,7 @@ function buildUI(gainNode,NodeID){
     
     var selectConnectionLabel = document.createElement('label');
     selectConnectionLabel.innerHTML = 'Connect to';
-    selectConnectionLabel.setAttribute('for', id + '-connection');
+    selectConnectionLabel.setAttribute('for', NodeID + '-connection');
     GainControls.appendChild(selectConnectionLabel);
     GainControls.appendChild(selectConnection);
     var remove = document.createElement('button')

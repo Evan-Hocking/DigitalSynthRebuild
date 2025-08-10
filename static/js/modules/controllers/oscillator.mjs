@@ -1,36 +1,12 @@
 import { ctx, removeActiveModule } from '../../script.mjs';
 // let activeKey = null;
 let activeFrequency = null;
-
+const activeKeys = new Map();
 let activeSource = null;
 let oscillatorGain = null;
-
 let activeNodes = {};
-let id = null;
-
-export function updateActiveNodes(Nodes, NodeID) {
-    activeNodes = Nodes;
-    var selectConnection = document.getElementById(NodeID + '-connection');
-    console.log(selectConnection)
-    var options = Object.keys(activeNodes);
-    removeOptions(selectConnection);
-    var opt = document.createElement('option');
-    opt.value = '';
-    opt.disabled = true;
-    opt.selected = true;
-    opt.text = 'Select';
-    selectConnection.appendChild(opt);
-    options.forEach(function (option) {
-        var opt = document.createElement('option');
-        opt.value = option;
-        opt.text = option.charAt(0).toUpperCase() + option.slice(1);
-        selectConnection.appendChild(opt);
-    });
-
-}
 
 
-const activeKeys = new Map();
 
 export function init(Nodes, NodeID) {
 
@@ -39,7 +15,6 @@ export function init(Nodes, NodeID) {
     oscillatorGain = ctx.createGain();
     oscillatorGain.gain.value = 0;
     activeSource.connect(oscillatorGain);
-    id = NodeID
     buildUI(NodeID);
     return oscillatorGain;
 }
@@ -116,7 +91,7 @@ function buildUI(NodeID) {
     });
     var selectConnectionLabel = document.createElement('label');
     selectConnectionLabel.innerHTML = 'Connect to';
-    selectConnectionLabel.setAttribute('for', id + '-connection');
+    selectConnectionLabel.setAttribute('for', NodeID + '-connection');
     oscilattorControls.appendChild(selectConnectionLabel);
     oscilattorControls.appendChild(selectConnection);
 
@@ -144,7 +119,7 @@ function buildKeys(NodeID) {
     keys.id = NodeID + 'keys';
     keys.classList.add("keys")
     var defaultOctave = 4;
-    var visibleOctaves = 3;
+    var visibleOctaves = 2;
     let keyIndex = 0;
     for (var octave = defaultOctave; octave < defaultOctave + visibleOctaves; octave++) {
         //generates whole object
@@ -157,11 +132,11 @@ function buildKeys(NodeID) {
             }
 
             //generates white note
-            var whitekey = createKey("whitenote", note + octave, keyOrder[keyIndex++])
+            var whitekey = createKey("whitenote", note + octave, keyOrder[keyIndex++], NodeID)
 
             //generates black note
             if (hasSharp) {
-                var blackkey = createKey("blacknote", note + '#' + octave, keyOrder[keyIndex++])
+                var blackkey = createKey("blacknote", note + '#' + octave, keyOrder[keyIndex++], NodeID)
 
                 whitekey.appendChild(blackkey);
             }
@@ -172,24 +147,24 @@ function buildKeys(NodeID) {
     return keys
 }
 
-function createKey(keyClass, note, computerKey) {
+function createKey(keyClass, note, computerKey, NodeID) {
     var key = document.createElement('div')
     key.className = keyClass
     key.dataset.note = note
     key.id = note
 
-    key.addEventListener('mousedown', function (event) {
-        noteDown(this.dataset.note, this.dataset.note.includes('#'))
+    key.addEventListener('mousedown', function () {
+        noteDown(this.dataset.note, this.dataset.note.includes('#'), NodeID)
     })
-    key.addEventListener('mouseup', function (event) {
-        noteUp(this.dataset.note, this.dataset.note.includes('#'))
+    key.addEventListener('mouseup', function () {
+        noteUp(this.dataset.note, this.dataset.note.includes('#'), NodeID)
     })
-    key.addEventListener('mouseout', function (event) {
-        noteUp(this.dataset.note, this.dataset.note.includes('#'))
+    key.addEventListener('mouseout', function () {
+        noteUp(this.dataset.note, this.dataset.note.includes('#'), NodeID)
     })
     if (computerKey !== undefined) {
-        listenForKeyDown(computerKey, note, () => noteDown(note, note.includes('#')))
-        listenForKeyUp(computerKey, note, () => noteUp(note, note.includes('#')))
+        listenForKeyDown(computerKey, note, () => noteDown(note, note.includes('#'), NodeID))
+        listenForKeyUp(computerKey, note, () => noteUp(note, note.includes('#'), NodeID))
     }
     return key
 }
@@ -217,7 +192,7 @@ function listenForKeyUp(targetKey, note, callback) {
 }
 
 
-function noteUp(note, isSharp) {
+function noteUp(note, isSharp, NodeID) {
 
     const elem = document.querySelector(`[data-note="${note}"]`);
     elem.style.background = isSharp ? '#292929' : 'white';
@@ -225,7 +200,7 @@ function noteUp(note, isSharp) {
     if (activeKeys.size > 0) {
         const lastKey = Array.from(activeKeys.keys()).pop();
         const lastNote = activeKeys.get(lastKey);
-        noteDown(lastNote, lastNote.includes('#'))
+        noteDown(lastNote, lastNote.includes('#'), NodeID)
     } else {
         var now = ctx.currentTime;
 
@@ -236,7 +211,7 @@ function noteUp(note, isSharp) {
 }
 
 //controls behaviour for when a note is pressed
-function noteDown(note, isSharp) {
+function noteDown(note, isSharp, NodeID) {
 
     const elem = document.querySelector(`[data-note="${note}"]`);
     if (elem) {
@@ -246,7 +221,7 @@ function noteDown(note, isSharp) {
 
 
         // Play the sound with the current gain
-        playSound(frequency);
+        playSound(frequency, NodeID);
     }
 
 }
@@ -256,9 +231,9 @@ function getFrequency(midiValue) {
 }
 
 
-function playSound(frequency) {
+function playSound(frequency, NodeID) {
     const gainModifer = 20; //divides result to keep gain in an appropriate range, can be configured to change the maximum possible gain -> MaxGain = 100/gainModifier
-    oscillatorGain.gain.value = document.getElementById(id + '-gain').value / gainModifer;
+    oscillatorGain.gain.value = document.getElementById(NodeID + '-gain').value / gainModifer;
     if (activeFrequency) {
         activeSource.frequency.setValueAtTime(frequency, ctx.currentTime);
     } else {
@@ -302,3 +277,27 @@ function noteToMIDI(noteName) {
         throw new Error('Invalid note name');
     }
 }
+
+
+export function updateActiveNodes(Nodes, NodeID) {
+    activeNodes = Nodes;
+    var selectConnection = document.getElementById(NodeID + '-connection');
+    console.log(selectConnection)
+    var options = Object.keys(activeNodes);
+    removeOptions(selectConnection);
+    var opt = document.createElement('option');
+    opt.value = '';
+    opt.disabled = true;
+    opt.selected = true;
+    opt.text = 'Select';
+    selectConnection.appendChild(opt);
+    options.forEach(function (option) {
+        var opt = document.createElement('option');
+        opt.value = option;
+        opt.text = option.charAt(0).toUpperCase() + option.slice(1);
+        selectConnection.appendChild(opt);
+    });
+
+}
+
+

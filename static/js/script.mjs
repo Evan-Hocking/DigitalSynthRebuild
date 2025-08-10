@@ -1,11 +1,26 @@
 const serverUrl = window.location.origin;
 export const ctx = new (window.AudioContext || window.webkitAudioContext)();
 console.log(serverUrl)
-var moduleCounter = 0;
+import * as utils from './utils.mjs';
+var moduleCounter = 0; //gives modules a numerical ID
 
 const moduleDictionary = {};
-const activeModules = {};
-activeModules['Output'] = { 'node': ctx.destination }
+const activeModules = {
+    'Output': {
+        'node': ctx.destination
+    }
+};
+
+function init(){
+    fetchModulePaths().then(paths => {
+        importModules(paths);
+        console.log('Modules loaded:', paths);
+    });
+}
+
+init()
+
+// activeModules['Output'] = { 'node': ctx.destination }
 async function fetchModulePaths() {
     const response = await fetch('/get_module_paths');
     const paths = await response.json();
@@ -22,23 +37,9 @@ async function importModules(paths) {
     modules.forEach((module, index) => {
         var moduleName = paths[index].split('/').pop().split('.')[0]; // Extract module name from path
         console.log(moduleName)
-        moduleName = getTextAfterLastBackslash(moduleName)
+        moduleName = utils.getTextAfterLastBackslash(moduleName)
         moduleDictionary[moduleName] = module;
     });
-
-    // modules.forEach((module, index) => {
-    //     const moduleName = paths[index].split('/').pop().split('.')[0]; // Extract module name from path
-    //     if (module.init) {
-    //         activeModules[moduleName] = {
-    //             'jsModule': module,
-    //             'node': module.init(activeModules)
-    //         }
-    //     }
-
-    // });
-
-
-
 
     var moduleSelect = document.getElementById('module-select');
     var options = Object.keys(moduleDictionary);
@@ -51,18 +52,7 @@ async function importModules(paths) {
 }
 
 
-function getTextAfterLastBackslash(path) {
-    const parts = path.split('\\');
-    return parts[parts.length - 1];
-}
 
-
-
-
-fetchModulePaths().then(paths => {
-    importModules(paths);
-    console.log('Modules loaded:', paths);
-});
 
 document.getElementById('add-module-button').addEventListener('click', function () {
     const selectedKey = document.getElementById('module-select').value;
@@ -71,28 +61,25 @@ document.getElementById('add-module-button').addEventListener('click', function 
     if (selectedModule && selectedModule.init) {
         activeModules[selectedKey + moduleCounter] = {
             'jsModule': selectedModule,
-            'node': selectedModule.init(activeModules,selectedKey + moduleCounter)
+            'node': selectedModule.init(activeModules, selectedKey + moduleCounter)
         }
-        moduleCounter +=1;
+        moduleCounter += 1;
         setActiveModules()
         console.log(activeModules)
     }
-    
+
 });
-export function removeActiveModule(moduleKey){
+export function removeActiveModule(moduleKey) {
     delete activeModules[moduleKey]
     setActiveModules()
 }
 
 
 function setActiveModules() {
-    console.log(1);
     Object.entries(activeModules).forEach(([key, entry]) => {
-        console.log(key)
         const module = entry.jsModule;
         if (module && module.updateActiveNodes) {
             module.updateActiveNodes(activeModules, key);
-            console.log('updated');
         }
     });
 }
