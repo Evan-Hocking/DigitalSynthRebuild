@@ -1,5 +1,5 @@
 import { ctx, removeActiveModule } from '../../script.mjs';
-let activeKey = null;
+// let activeKey = null;
 let activeFrequency = null;
 
 let activeSource = null;
@@ -30,35 +30,8 @@ export function updateActiveNodes(Nodes, NodeID) {
 }
 
 
-const activeKeys = []
-const keyNoteMapping = {
-    'tab': 'C4',
-    '1': 'C#4',
-    'q': 'D4',
-    '2': 'D#4',
-    'w': 'E4',
-    'e': 'F4',
-    '4': 'F#4',
-    'r': 'G4',
-    '5': 'G#4',
-    't': 'A4',
-    '6': 'A#4',
-    'y': 'B4',
-    'u': 'C5',
-    '8': 'C#5',
-    'i': 'D5',
-    '9': 'D#5',
-    'o': 'E5',
-    'p': 'F5',
-    '-': 'F#5',
-    '[': 'G5',
-    '=': 'G#5',
-    ']': 'A5',
-    'backspace': 'A#5',
-    'enter': 'B5',
+const activeKeys = new Map();
 
-    // Add more keys as needed
-};
 export function init(Nodes, NodeID) {
 
     activeNodes = Nodes;
@@ -84,20 +57,20 @@ function buildUI(NodeID) {
 
 
     var WaveformSelect = document.createElement('select');
-    WaveformSelect.id = NodeID+'-waveform-select';
+    WaveformSelect.id = NodeID + '-waveform-select';
     var waveforms = ['sine', 'square', 'sawtooth', 'triangle'];
     waveforms.forEach(function (waveform) {
         var option = document.createElement('option');
         option.value = waveform;
-        option.text = waveform.charAt(0).toUpperCase() + waveform.slice(1);
+        option.text = waveform.charAt(0).toUpperCase() + waveform.slice(1); //capitalises first character
         WaveformSelect.appendChild(option);
     });
     WaveformSelect.addEventListener('change', function (event) {
         const selectedWaveform = event.target.value;
         activeSource.type = selectedWaveform;
-        WaveformSelect.blur()
+        WaveformSelect.blur() //removes focus, fixes bug of keyboard presed changing selected waveform
     });
-    
+
     var WaveformLabel = document.createElement('label');
     WaveformLabel.innerHTML = 'Waveform';
     WaveformLabel.setAttribute('for', 'waveform-select');
@@ -137,9 +110,6 @@ function buildUI(NodeID) {
     selectConnection.addEventListener('change', function (event) {
         const selectedNode = event.target.value;
         const selectedNodeValue = activeNodes[selectedNode]['node'];
-        console.log('active nodes:', activeNodes);
-        console.log('Selected node:', selectedNode);
-        console.log('Selected node Value:', selectedNodeValue);
         oscillatorGain.disconnect();
         oscillatorGain.connect(selectedNodeValue);
         selectConnection.blur()
@@ -156,7 +126,7 @@ function buildUI(NodeID) {
 
     var remove = document.createElement('button')
     remove.innerHTML = "Remove"
-    remove.addEventListener('click', function (event){
+    remove.addEventListener('click', function (event) {
         oscilattorControls.remove()
         keys.remove()
         removeActiveModule(NodeID)
@@ -164,17 +134,19 @@ function buildUI(NodeID) {
     oscilattorControls.appendChild(remove)
 }
 function buildKeys(NodeID) {
-    var notes = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
-    
-
+    const keyOrder = [
+        'tab', '1', 'q', '2', 'w', 'e', '4', 'r', '5', 't', '6', 'y',
+        'u', '8', 'i', '9', 'o', 'p', '-', '[', '=', ']', 'backspace', 'enter'
+    ];
+    const notes = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
 
     var keys = document.createElement('div');
     keys.id = NodeID + 'keys';
     keys.classList.add("keys")
-
-
-    // var html = "";
-    for (var octave = 0; octave < 2; octave++) {
+    var defaultOctave = 4;
+    var visibleOctaves = 3;
+    let keyIndex = 0;
+    for (var octave = defaultOctave; octave < defaultOctave + visibleOctaves; octave++) {
         //generates whole object
         for (var i = 0; i < notes.length; i++) {
             var hasSharp = true;
@@ -185,10 +157,12 @@ function buildKeys(NodeID) {
             }
 
             //generates white note
-            var whitekey = createKey("whitenote", note + (octave + 4))
+            var whitekey = createKey("whitenote", note + octave, keyOrder[keyIndex++])
+
             //generates black note
             if (hasSharp) {
-                var blackkey = createKey("blacknote", note + '#' + (octave + 4))
+                var blackkey = createKey("blacknote", note + '#' + octave, keyOrder[keyIndex++])
+
                 whitekey.appendChild(blackkey);
             }
             keys.appendChild(whitekey);
@@ -198,7 +172,7 @@ function buildKeys(NodeID) {
     return keys
 }
 
-function createKey(keyClass, note) {
+function createKey(keyClass, note, computerKey) {
     var key = document.createElement('div')
     key.className = keyClass
     key.dataset.note = note
@@ -213,57 +187,34 @@ function createKey(keyClass, note) {
     key.addEventListener('mouseout', function (event) {
         noteUp(this.dataset.note, this.dataset.note.includes('#'))
     })
+    if (computerKey !== undefined) {
+        listenForKeyDown(computerKey, note, () => noteDown(note, note.includes('#')))
+        listenForKeyUp(computerKey, note, () => noteUp(note, note.includes('#')))
+    }
     return key
 }
 
 
-// #region keyEventListeners
-//Event listener for the keydown event
-document.addEventListener('keydown', function (event) {
-    //prevents default tab behaviour since it is used for keyboard input
-    if (event.key === 'Tab') {
-        event.preventDefault();
-    }
-    const keyPressed = event.key.toLowerCase();
-
-    //tests if key is already playing
-
-
-
-    // Check if the pressed key is in the mapping
-    if (keyNoteMapping.hasOwnProperty(keyPressed)) {
-        if (!activeKeys.includes(keyPressed)) {
-            activeKeys.push(keyPressed);
-            const note = keyNoteMapping[keyPressed];
-
-
-            //calling notedown to start sequence
-            noteDown(note, "1234567890-=backspace`".includes(keyPressed) && keyPressed != "p" && keyPressed != "e");
+function listenForKeyDown(targetKey, note, callback) {
+    document.addEventListener('keydown', function handler(event) {
+        if (event.key.toLowerCase() === targetKey.toLowerCase()) {
+            if (!activeKeys.has(targetKey)) {
+                activeKeys.set(targetKey, note)
+                callback(event)
+            }
         }
-    }
-});
-
-//Event listenter for when a key is released
-document.addEventListener('keyup', function (event) {
-    const keyReleased = event.key.toLowerCase();
-    const index = activeKeys.indexOf(keyReleased);
-
-    // Check if the key is in the activeKeys array
-    if (index !== -1) {
-        activeKeys.splice(index, 1);
-    }
-    //tests if key is viable
-    if (keyNoteMapping.hasOwnProperty(keyReleased)) {
-        const note = keyNoteMapping[keyReleased];
-        noteUp(note, "1234567890-=backspace`".includes(keyReleased) && keyReleased != "p" && keyReleased != "e");
-    }
-    //restarts original note if simultaneous notes played
-
-});
-
-// #endregion
-
-
+    });
+}
+function listenForKeyUp(targetKey, note, callback) {
+    document.addEventListener('keyup', function handler(event) {
+        if (event.key.toLowerCase() === targetKey.toLowerCase()) {
+            if (activeKeys.has(targetKey)) {
+                activeKeys.delete(targetKey);
+                callback(event)
+            }
+        }
+    });
+}
 
 
 function noteUp(note, isSharp) {
@@ -271,8 +222,10 @@ function noteUp(note, isSharp) {
     const elem = document.querySelector(`[data-note="${note}"]`);
     elem.style.background = isSharp ? '#292929' : 'white';
 
-    if (activeKeys[0]) {
-        noteDown(keyNoteMapping[activeKeys[activeKeys.length - 1]],)
+    if (activeKeys.size > 0) {
+        const lastKey = Array.from(activeKeys.keys()).pop();
+        const lastNote = activeKeys.get(lastKey);
+        noteDown(lastNote, lastNote.includes('#'))
     } else {
         var now = ctx.currentTime;
 
@@ -299,14 +252,14 @@ function noteDown(note, isSharp) {
 }
 
 function getFrequency(midiValue) {
-    return Math.pow(2, (midiValue - 69) / 12) * 440;
+    return Math.pow(2, (midiValue - 69) / 12) * 440; //midi to frequency coversion
 }
 
 
 function playSound(frequency) {
-    oscillatorGain.gain.value = document.getElementById(id + '-gain').value / 20;
+    const gainModifer = 20; //divides result to keep gain in an appropriate range, can be configured to change the maximum possible gain -> MaxGain = 100/gainModifier
+    oscillatorGain.gain.value = document.getElementById(id + '-gain').value / gainModifer;
     if (activeFrequency) {
-
         activeSource.frequency.setValueAtTime(frequency, ctx.currentTime);
     } else {
         activeSource.frequency.value = frequency
@@ -325,23 +278,26 @@ function removeOptions(selectElement) {
 
 
 function noteToMIDI(noteName) {
-    const noteMap = {
+    noteName = noteName.trim();
+    const semitoneMap = {
         'C': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3, 'E': 4,
         'F': 5, 'F#': 6, 'Gb': 6, 'G': 7, 'G#': 8, 'Ab': 8, 'A': 9,
         'A#': 10, 'Bb': 10, 'B': 11
     };
-
-    const match = noteName.match(/^([A-Ga-g#]+)([0-9]+)$/);
-    if (!match) {
+    const noteComponents = noteName.match(/^([A-Ga-g])([#b]?)([0-9]+)$/);
+    if (!noteComponents) {
         throw new Error('Invalid note name format');
     }
-
-    const note = match[1].toUpperCase();
-    const octave = parseInt(match[2]);
-
-    if (noteMap.hasOwnProperty(note)) {
+    const note = noteComponents[1].toUpperCase() + noteComponents[2];
+    const octave = parseInt(noteComponents[3]);
+    if (octave < -1 || octave > 9) {
+        throw new Error('Octave out of valid MIDI range (-1 to 9)');
+    }
+    const MIDI_OCTAVE_OFFSET = 1;
+    const semitonesInOctave = 12;
+    if (semitoneMap.hasOwnProperty(note)) {
         // Calculate the MIDI note number based on A440 tuning.
-        return noteMap[note] + (octave + 1) * 12; // A440 = MIDI note 69
+        return semitoneMap[note] + (octave + MIDI_OCTAVE_OFFSET) * semitonesInOctave; // A440 = MIDI note 69
     } else {
         throw new Error('Invalid note name');
     }
