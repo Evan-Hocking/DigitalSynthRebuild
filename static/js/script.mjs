@@ -11,7 +11,7 @@ const activeModules = {
     }
 };
 
-function init(){
+function init() {
     fetchModulePaths().then(paths => {
         importModules(paths);
         console.log('Modules loaded:', paths);
@@ -20,13 +20,11 @@ function init(){
 
 init()
 
-// activeModules['Output'] = { 'node': ctx.destination }
 async function fetchModulePaths() {
-    const response = await fetch('/get_module_paths');
-    const paths = await response.json();
-    return paths.map(path => `/static/js${path}`);
+    const { ipcRenderer } = window.require ? window.require('electron') : require('electron');
+    const paths = await ipcRenderer.invoke('get-module-paths');
+    return paths; // Already absolute file URLs
 }
-
 
 async function importModules(paths) {
     const modulePromises = paths.map(path => import(path));

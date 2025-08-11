@@ -1,0 +1,23 @@
+{
+  "name": "digitalsynthrebuild",
+  "version": "1.0.0",
+  "description": "Open Synth v2",
+  "main": "main.js",
+  "devDependencies": {
+    "electron": "^37.2.6"
+  },
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Evan-Hocking/DigitalSynthRebuild.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Evan-Hocking/DigitalSynthRebuild/issues"
+  },
+  "homepage": "https://github.com/Evan-Hocking/DigitalSynthRebuild#readme"
+}
