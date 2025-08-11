@@ -1,6 +1,6 @@
 {
   "name": "digitalsynthrebuild",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Open Synth v2",
   "main": "main.js",
   "devDependencies": {
@@ -24,7 +24,7 @@
     "url": "git+https://github.com/Evan-Hocking/DigitalSynthRebuild.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Evan Richard Hocking",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Evan-Hocking/DigitalSynthRebuild/issues"
