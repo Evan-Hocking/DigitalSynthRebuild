@@ -1,5 +1,6 @@
 const serverUrl = window.location.origin;
 export const ctx = new (window.AudioContext || window.webkitAudioContext)();
+// window.ctx = ctx; // Expose ctx globally for modules
 console.log(serverUrl)
 import * as utils from './utils.mjs';
 var moduleCounter = 0; //gives modules a numerical ID
@@ -12,24 +13,48 @@ const activeModules = {
 };
 
 function init() {
-    fetchModulePaths().then(paths => {
-        importModules(paths);
-        console.log('Modules loaded:', paths);
+    async function refreshModules() {
+        fetchModulePaths().then(paths => {
+            importModules(paths);
+            console.log('Modules loaded:', paths);
+        }, error => {
+            console.error('Error loading modules:', error);
+        });
+    }
+
+    const moduleSelect = document.getElementById('module-select');
+    let loaded = false;
+    moduleSelect.addEventListener('focus', async () => {
+        if (!loaded) {
+            await refreshModules();
+            loaded = true;
+        }
     });
+    moduleSelect.addEventListener('blur', () => {
+        loaded = false;
+    });
+    refreshModules();
 }
 
-init()
+init();
+
+
+
 
 async function fetchModulePaths() {
-    const { ipcRenderer } = window.require ? window.require('electron') : require('electron');
-    const paths = await ipcRenderer.invoke('get-module-paths');
-    return paths; // Already absolute file URLs
+    // Call the preload-exposed API instead of using require
+    return await window.synthAPI.getModulePaths();
 }
 
 async function importModules(paths) {
+    for (let key in moduleDictionary) {
+        delete moduleDictionary[key];
+    }
+    const moduleSelect = document.getElementById('module-select');
+    moduleSelect.innerHTML = "";
+
     const modulePromises = paths.map(path => import(path));
     const modules = await Promise.all(modulePromises);
-
 
 
     modules.forEach((module, index) => {
@@ -39,7 +64,7 @@ async function importModules(paths) {
         moduleDictionary[moduleName] = module;
     });
 
-    var moduleSelect = document.getElementById('module-select');
+
     var options = Object.keys(moduleDictionary);
     options.forEach(function (option) {
         var opt = document.createElement('option');
@@ -59,7 +84,7 @@ document.getElementById('add-module-button').addEventListener('click', function 
     if (selectedModule && selectedModule.init) {
         activeModules[selectedKey + moduleCounter] = {
             'jsModule': selectedModule,
-            'node': selectedModule.init(activeModules, selectedKey + moduleCounter)
+            'node': selectedModule.init(activeModules, selectedKey + moduleCounter, ctx, removeActiveModule)
         }
         moduleCounter += 1;
         setActiveModules()
@@ -71,6 +96,7 @@ export function removeActiveModule(moduleKey) {
     delete activeModules[moduleKey]
     setActiveModules()
 }
+
 
 
 function setActiveModules() {

@@ -29,6 +29,11 @@ npm start
 ```
 This will launch Open Synth in a desktop window.
 
+### Custom Modules
+
+To add your own modules, place `.mjs` files in the `Documents/OpenSynthModules` folder.  
+A `template.mjs` is provided as a starting point, but it is ignored by the app.
+
 ## Development
 
 - The main Electron entry point is [`main.js`](main.js).

@@ -1,21 +1,23 @@
-import { ctx, removeActiveModule } from '../../script.mjs';
+// import { ctx, removeActiveModule } from '../../script.mjs';
 // let activeKey = null;
 let activeFrequency = null;
 const activeKeys = new Map();
 let activeSource = null;
 let oscillatorGain = null;
 let activeNodes = {};
+let removeActiveModule;
+let ctx;
 
-
-
-export function init(Nodes, NodeID) {
-
+export function init(Nodes, NodeID, audioCtx, RemActMod) {
+    ctx = audioCtx;
+    removeActiveModule = RemActMod;
     activeNodes = Nodes;
     activeSource = ctx.createOscillator();
     oscillatorGain = ctx.createGain();
     oscillatorGain.gain.value = 0;
     activeSource.connect(oscillatorGain);
     buildUI(NodeID);
+
     return oscillatorGain;
 }
 function buildUI(NodeID) {

@@ -1,7 +1,9 @@
 let activeNodes = {};
 // import { ctx, removeActiveModule } from '../script.mjs';
-let removeActiveModule;
-let ctx
+
+let removeActiveModule
+let ctx;
+
 export function init(Nodes, NodeID, audioCtx, RemActMod) {
     ctx = audioCtx;
     removeActiveModule = RemActMod;
@@ -9,6 +11,7 @@ export function init(Nodes, NodeID, audioCtx, RemActMod) {
     activeNodes = Nodes;
     console.log('Active nodes:', activeNodes);
     buildUI(gainNode,NodeID);
+ 
     return gainNode;
 }
 
