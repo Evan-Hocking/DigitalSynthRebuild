@@ -1,33 +1,44 @@
-# Name:
-Open Synth v2
+# Open Synth v2
 
-# Introduction:
-A virtual modular synthesiser, designed for experimentation and performance. Originally developed as a university project, this version is rebuilt fromthe ground up to address problems in the skeleton of the original.
+## Introduction
+Open Synth v2 is a virtual modular synthesizer designed for experimentation and performance. Originally developed as a university project, this version has been rebuilt from the ground up to address architectural issues in the original.
 
-# Prerequisites:
- - Requires Python 3.9
- - A modern Web Browser
+## Prerequisites
+- [Node.js](https://nodejs.org/) (v16 or later recommended)
+- [Git](https://git-scm.com/) (for cloning the repository)
 
-# Installation
+## Installation
 
-1. **Install Flask for Python:**
+1. **Clone the repository:**
     ```bash
-    pip install Flask
+    git clone https://github.com/Evan-Hocking/DigitalSynthRebuild.git
+    cd DigitalSynthRebuild
     ```
 
-# Usage
-After installing Flask, run the server by executing the command:
+2. **Install dependencies:**
+    ```bash
+    npm install
+    ```
+    > **Note:** The `node_modules` directory is not included in the repository and will be created by this step.
+
+## Usage
+
+Start the Electron app with:
 ```bash
-python server.py
+npm start
 ```
-Or by running server.py
+This will launch Open Synth in a desktop window.
 
-The System will then be opened in a browser but if renavigation is required head to:
+## Development
 
-[http://127.0.0.1:5000/](http://127.0.0.1:5000/)
+- The main Electron entry point is [`main.js`](main.js).
+- The synthesizer UI and logic are in the [`static/`](static/) directory.
+- Modules are dynamically loaded from [`static/js/modules/`](static/js/modules/).
 
-# Licence
-## Copyright &copy; [2025] [Evan Richard Hocking]
+
+## License
+
+&copy; 2025 Evan Richard Hocking
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
