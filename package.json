@@ -4,10 +4,20 @@
   "description": "Open Synth v2",
   "main": "main.js",
   "devDependencies": {
+    "@electron-forge/cli": "^7.8.3",
+    "@electron-forge/maker-deb": "^7.8.3",
+    "@electron-forge/maker-rpm": "^7.8.3",
+    "@electron-forge/maker-squirrel": "^7.8.3",
+    "@electron-forge/maker-zip": "^7.8.3",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.8.3",
+    "@electron-forge/plugin-fuses": "^7.8.3",
+    "@electron/fuses": "^1.8.0",
     "electron": "^37.2.6"
   },
   "scripts": {
-    "start": "electron ."
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "repository": {
     "type": "git",
@@ -19,5 +29,8 @@
   "bugs": {
     "url": "https://github.com/Evan-Hocking/DigitalSynthRebuild/issues"
   },
-  "homepage": "https://github.com/Evan-Hocking/DigitalSynthRebuild#readme"
+  "homepage": "https://github.com/Evan-Hocking/DigitalSynthRebuild#readme",
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.1"
+  }
 }

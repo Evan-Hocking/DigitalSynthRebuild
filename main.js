@@ -23,11 +23,13 @@ function createWindow() {
     const win = new BrowserWindow({
         width: 1000,
         height: 800,
+        icon: path.join(__dirname, 'static','image', 'icons', 'key.ico'),
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false, // For simplicity; use preload.js for better security
         }
     });
+    win.maximize();
     win.loadFile('index.html');
 }
 
