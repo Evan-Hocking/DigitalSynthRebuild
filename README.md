@@ -10,7 +10,7 @@ Open Synth v2 is a virtual modular synthesizer designed for experimentation and 
 ## End User Installation
 
 1. **Download the Executable:**
-Navigate to Releases and download the [latest release](https://github.com/Evan-Hocking/DigitalSynthRebuild/releases)
+Navigate to [Releases](https://github.com/Evan-Hocking/DigitalSynthRebuild/releases) and download the latest release
 
 2. **Run Executable**
 
