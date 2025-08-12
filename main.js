@@ -2,7 +2,10 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const fs = require('fs');
 const path = require('path');
 
-const userModulesDir = path.join(app.getPath('documents'), 'OpenSynthModules');
+const userConfigsDir = path.join(app.getPath('documents'), 'OpenSynth/Saves');
+if (!fs.existsSync(userConfigsDir)) {
+  fs.mkdirSync(userConfigsDir, { recursive: true });
+}const userModulesDir = path.join(app.getPath('documents'), 'OpenSynth/Modules');
 if (!fs.existsSync(userModulesDir)) {
   fs.mkdirSync(userModulesDir, { recursive: true });
 }
@@ -51,7 +54,7 @@ app.whenReady().then(createWindow);
 // IPC handler for module paths
 ipcMain.handle('get-module-paths', async () => {
     const builtInModulesDir = path.join(__dirname, 'static/js/modules');
-    const userModulesDir = path.join(app.getPath('documents'), 'OpenSynthModules');
+    const userModulesDir = path.join(app.getPath('documents'), 'OpenSynth/Modules');
     const builtInModules = getModulePaths(builtInModulesDir).map(p => {
         const absPath = path.join(builtInModulesDir, p);
         return 'file://' + absPath.replace(/\\/g, '/');

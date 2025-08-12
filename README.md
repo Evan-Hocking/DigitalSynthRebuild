@@ -45,7 +45,7 @@ A `template.mjs` is provided as a starting point, but it is ignored by the app.
 
 - The main Electron entry point is [`main.js`](main.js).
 - The synthesizer UI and logic are in the [`static/`](static/) directory.
-- Modules are dynamically loaded from [`static/js/modules/`](static/js/modules/) and ['Documents/OpenSynthModules/'](Documents/OpenSynthModules/).
+- Modules are dynamically loaded from [`static/js/modules/`](static/js/modules/) and ['Documents/OpenSynth/Modules/'](Documents/OpenSynth/Modules/).
 
 
 ## License
