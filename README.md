@@ -7,7 +7,14 @@ Open Synth v2 is a virtual modular synthesizer designed for experimentation and 
 - [Node.js](https://nodejs.org/) (v16 or later recommended)
 - [Git](https://git-scm.com/) (for cloning the repository)
 
-## Installation
+## End User Installation
+
+1. **Download the Executable:**
+Navigate to Releases and download the [latest release](https://github.com/Evan-Hocking/DigitalSynthRebuild/releases)
+
+2. **Run Executable**
+
+## Dev Installation
 
 1. **Clone the repository:**
     ```bash
@@ -38,7 +45,7 @@ A `template.mjs` is provided as a starting point, but it is ignored by the app.
 
 - The main Electron entry point is [`main.js`](main.js).
 - The synthesizer UI and logic are in the [`static/`](static/) directory.
-- Modules are dynamically loaded from [`static/js/modules/`](static/js/modules/).
+- Modules are dynamically loaded from [`static/js/modules/`](static/js/modules/) and ['Documents/OpenSynthModules/'](Documents/OpenSynthModules/).
 
 
 ## License
