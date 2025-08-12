@@ -1,7 +1,7 @@
-# Open Synth v2
+# Open Synth Rebuild
 
 ## Introduction
-Open Synth v2 is a virtual modular synthesizer designed for experimentation and performance. Originally developed as a university project, this version has been rebuilt from the ground up to address architectural issues in the original.
+Open Synth Rebuild is a virtual modular synthesizer designed for experimentation and performance. Originally developed as a [university project](https://github.com/Evan-Hocking/_DigitalSynthProject), this version has been rebuilt from the ground up to address architectural issues in the original.
 
 ## Prerequisites
 - [Node.js](https://nodejs.org/) (v16 or later recommended)
