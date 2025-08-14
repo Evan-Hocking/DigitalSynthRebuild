@@ -1,20 +1,28 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, shell } = require('electron');
 const fs = require('fs');
 const path = require('path');
 
+
+const exeSrc = process.execPath; // Path to running .exe in packaged build
+const exeDest = path.join(app.getPath('documents'), 'OpenSynth', path.basename(exeSrc));
+
+if (!fs.existsSync(exeDest)) {
+    fs.copyFileSync(exeSrc, exeDest);
+}
 const userConfigsDir = path.join(app.getPath('documents'), 'OpenSynth/Saves');
 if (!fs.existsSync(userConfigsDir)) {
-  fs.mkdirSync(userConfigsDir, { recursive: true });
-}const userModulesDir = path.join(app.getPath('documents'), 'OpenSynth/Modules');
+    fs.mkdirSync(userConfigsDir, { recursive: true });
+}
+const userModulesDir = path.join(app.getPath('documents'), 'OpenSynth/Modules');
 if (!fs.existsSync(userModulesDir)) {
-  fs.mkdirSync(userModulesDir, { recursive: true });
+    fs.mkdirSync(userModulesDir, { recursive: true });
 }
 
 // Always copy/overwrite template.mjs
 const templateSrc = path.join(__dirname, 'static', 'js', 'modules', 'template.mjs');
 const templateDest = path.join(userModulesDir, 'template.mjs');
 if (fs.existsSync(templateSrc)) {
-  fs.copyFileSync(templateSrc, templateDest);
+    fs.copyFileSync(templateSrc, templateDest);
 }
 
 function getModulePaths(directory) {
@@ -48,8 +56,108 @@ function createWindow() {
     win.maximize();
     win.loadFile('index.html');
 }
+const OpenSynthDir = path.join(app.getPath('documents'), 'OpenSynth');
+function createMenu() {
+    const menuTemplate = [
+        {
+            label: 'File',
+            submenu: [
+                {
+                    label: 'Open',
+                    submenu: [
+                        {
+                            label: 'Modules',
+                            click: () => shell.openPath(userModulesDir)
+                        },
+                        {
+                            label: 'Saves',
+                            click: () => shell.openPath(userConfigsDir)
+                        },
+                        { type: 'separator' },
+                        {
+                            label: 'Folder',
+                            click: () => shell.openPath(OpenSynthDir)
+                        }
+                    ]
+                },
+                { type: 'separator' },
+                { role: 'quit', label: 'Exit' }
+            ]
+        },
+        {
+            label: 'Edit',
+            submenu: [
+                { role: 'undo' },
+                { role: 'redo' },
+                { type: 'separator' },
+                { role: 'cut' },
+                { role: 'copy' },
+                { role: 'paste' },
+                { role: 'delete' },
+                { role: 'selectAll' }
+            ]
+        },
+        {
+            label: 'View',
+            submenu: [
+                { role: 'reload' },
+                { role: 'forceReload' },
+                { role: 'toggleDevTools' },
+                { type: 'separator' },
+                { role: 'resetZoom', label: 'Actual Size' },
+                { role: 'zoomIn' },
+                { role: 'zoomOut' },
+                { type: 'separator' },
+                { role: 'togglefullscreen' }
+            ]
+        },
+        {
+            label: 'Window',
+            submenu: [
+                { role: 'minimize' },
+                { role: 'zoom' },
+                { role: 'close' }
+            ]
+        },
+        {
+            label: 'Help',
+            submenu: [
+                {
+                    label: 'Learn More',
+                    click: async () => {
+                        await shell.openExternal('https://electronjs.org')
+                    }
+                },
+                {
+                    label: 'Documentation',
+                    click: async () => {
+                        await shell.openExternal('https://electronjs.org/docs')
+                    }
+                },
+                {
+                    label: 'Community Discussions',
+                    click: async () => {
+                        await shell.openExternal('https://www.electronjs.org/community')
+                    }
+                },
+                {
+                    label: 'Search Issues',
+                    click: async () => {
+                        await shell.openExternal('https://github.com/electron/electron/issues')
+                    }
+                }
+            ]
+        }
+    ];
 
-app.whenReady().then(createWindow);
+    const menu = Menu.buildFromTemplate(menuTemplate);
+    Menu.setApplicationMenu(menu);
+}
+
+app.whenReady().then(() => {
+    createWindow();
+    createMenu();
+});
 
 // IPC handler for module paths
 ipcMain.handle('get-module-paths', async () => {
