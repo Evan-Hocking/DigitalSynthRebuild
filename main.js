@@ -1,14 +1,25 @@
 const { app, BrowserWindow, ipcMain, Menu, shell } = require('electron');
 const fs = require('fs');
 const path = require('path');
+const ws = require('windows-shortcuts');
 
-
-const exeSrc = process.execPath; // Path to running .exe in packaged build
-const exeDest = path.join(app.getPath('documents'), 'OpenSynth', path.basename(exeSrc));
-
-if (!fs.existsSync(exeDest)) {
-    fs.copyFileSync(exeSrc, exeDest);
+const userDir = path.join(app.getPath('documents'), 'OpenSynth');
+if (!fs.existsSync(userDir)) {
+    fs.mkdirSync(userDir, { recursive: true });
 }
+const targetExe = process.execPath; // this is the exe in AppData
+const shortcutPath = path.join(userDir, 'OpenSynth.lnk');
+console.log(targetExe);
+
+// Create or overwrite shortcut
+if (!fs.existsSync(shortcutPath)) {
+    ws.create(shortcutPath, {
+        target: targetExe,
+        desc: 'OpenSynth Shortcut',
+        workingDir: path.dirname(targetExe),
+    });
+}
+
 const userConfigsDir = path.join(app.getPath('documents'), 'OpenSynth/Saves');
 if (!fs.existsSync(userConfigsDir)) {
     fs.mkdirSync(userConfigsDir, { recursive: true });
@@ -24,6 +35,13 @@ const templateDest = path.join(userModulesDir, 'template.mjs');
 if (fs.existsSync(templateSrc)) {
     fs.copyFileSync(templateSrc, templateDest);
 }
+
+if (require('electron-squirrel-startup')) {
+    // Handle Squirrel events (install, update, uninstall)
+    // This will exit the app immediately for install/update events
+    app.quit();
+}
+
 
 function getModulePaths(directory) {
     let modulePaths = [];
@@ -157,6 +175,7 @@ function createMenu() {
 app.whenReady().then(() => {
     createWindow();
     createMenu();
+    console.log(process.execPath);
 });
 
 // IPC handler for module paths

@@ -1,7 +1,5 @@
 const serverUrl = window.location.origin;
 export const ctx = new (window.AudioContext || window.webkitAudioContext)();
-// window.ctx = ctx; // Expose ctx globally for modules
-console.log(serverUrl)
 import * as utils from './utils.mjs';
 var moduleCounter = 0; //gives modules a numerical ID
 
