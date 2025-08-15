@@ -4,6 +4,7 @@ const path = require('path');
 const ws = require('windows-shortcuts');
 
 const userDir = path.join(app.getPath('documents'), 'OpenSynth');
+
 if (!fs.existsSync(userDir)) {
     fs.mkdirSync(userDir, { recursive: true });
 }
@@ -19,6 +20,7 @@ if (!fs.existsSync(shortcutPath)) {
         workingDir: path.dirname(targetExe),
     });
 }
+
 
 const userConfigsDir = path.join(app.getPath('documents'), 'OpenSynth/Saves');
 if (!fs.existsSync(userConfigsDir)) {
@@ -37,6 +39,14 @@ if (fs.existsSync(templateSrc)) {
 }
 
 if (require('electron-squirrel-startup')) {
+    const desktopShortcutPath = path.join(app.getPath('desktop'), 'OpenSynth.lnk');
+    if (!fs.existsSync(desktopShortcutPath)) {
+        ws.create(desktopShortcutPath, {
+            target: targetExe,
+            desc: 'OpenSynth Shortcut',
+            workingDir: path.dirname(targetExe),
+        });
+    }
     // Handle Squirrel events (install, update, uninstall)
     // This will exit the app immediately for install/update events
     app.quit();
@@ -175,7 +185,6 @@ function createMenu() {
 app.whenReady().then(() => {
     createWindow();
     createMenu();
-    console.log(process.execPath);
 });
 
 // IPC handler for module paths
