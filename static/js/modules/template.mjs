@@ -7,12 +7,12 @@ let ctx;
 export function init(Nodes, NodeID, audioCtx, RemActMod) {
     ctx = audioCtx;
     removeActiveModule = RemActMod;
-    let gainNode = ctx.createGain();
+    let Node = ctx.createGain(); //Set to module type
     activeNodes = Nodes;
     console.log('Active nodes:', activeNodes);
-    buildUI(gainNode,NodeID);
+    buildUI(Node,NodeID);
  
-    return gainNode;
+    return Node;
 }
 
 function removeOptions(selectElement) {
@@ -43,37 +43,37 @@ export function updateActiveNodes(Nodes, NodeID){
     
 }
 
-function buildUI(gainNode,NodeID){
+function buildUI(Node,NodeID){
     var modulePanel = document.getElementById('module-panel');
-    var GainControls = document.createElement('div');
-    GainControls.id = NodeID + '-Controls';
+    var NodeControls = document.createElement('div');
+    NodeControls.id = NodeID + '-Controls';
     
-    GainControls.className = 'module';
-    GainControls.classList.add("module-box")
-    modulePanel.appendChild(GainControls);
+    NodeControls.className = 'module';
+    NodeControls.classList.add("module-box")
+    modulePanel.appendChild(NodeControls);
     var moduleTitle = document.createElement('h2');
     moduleTitle.innerHTML = NodeID;
-    GainControls.appendChild(moduleTitle);
+    NodeControls.appendChild(moduleTitle);
 
-    var gain = document.createElement('input');
-    gain.classList.add("vertical-slider")
-    gain.setAttribute('orient', 'vertical');
-    gain.type = 'range';
-    gain.id = NodeID;
-    gain.min = 0;
-    gain.max = 100;
-    gain.value = 50;
-    GainControls.appendChild(gain);
-    gain.addEventListener('input', function (event) {
-        const gainModifer = 20; //divides result to keep gain in an appropriate range, can be configured to change the maximum possible gain -> MaxGain = 100/gainModifier
-        const gainValue = event.target.value / gainModifer;
-        gainNode.gain.setValueAtTime(gainValue, ctx.currentTime);
-        gain.blur()
+    var Slider = document.createElement('input');
+    Slider.classList.add("vertical-slider")
+    Slider.setAttribute('orient', 'vertical');
+    Slider.type = 'range';
+    Slider.id = NodeID;
+    Slider.min = 0;
+    Slider.max = 100;
+    Slider.value = 50;
+    NodeControls.appendChild(Slider);
+    Slider.addEventListener('input', function (event) {
+        const SliderModifer = 20; //divides result to keep gain in an appropriate range, can be configured to change the maximum possible gain -> MaxGain = 100/gainModifier
+        const SliderValue = event.target.value / SliderModifer;
+        Node.gain.setValueAtTime(SliderValue, ctx.currentTime);
+        Slider.blur()
     });
-    var gainLabel = document.createElement('label');
-    gainLabel.innerHTML = 'Gain';
-    gainLabel.setAttribute('for', 'gain');
-    GainControls.appendChild(gainLabel);
+    var SliderLabel = document.createElement('label');
+    SliderLabel.innerHTML = 'Slider';
+    SliderLabel.setAttribute('for', 'Node');
+    NodeControls.appendChild(SliderLabel);
 
 
     var selectConnection = document.createElement('select');
@@ -94,23 +94,23 @@ function buildUI(gainNode,NodeID){
     selectConnection.addEventListener('change', function (event) {
         const selectedNode = event.target.value;
         const selectedNodeValue = activeNodes[selectedNode]['node'];
-        gainNode.disconnect();
-        gainNode.connect(selectedNodeValue);
+        Node.disconnect();
+        Node.connect(selectedNodeValue);
         selectConnection.blur()
     });
     
     var selectConnectionLabel = document.createElement('label');
     selectConnectionLabel.innerHTML = 'Connect to';
     selectConnectionLabel.setAttribute('for', NodeID + '-connection');
-    GainControls.appendChild(selectConnectionLabel);
-    GainControls.appendChild(selectConnection);
+    NodeControls.appendChild(selectConnectionLabel);
+    NodeControls.appendChild(selectConnection);
     var remove = document.createElement('button')
         remove.innerHTML = "Remove"
         remove.addEventListener('click', function (event){
-            GainControls.remove()
+            NodeControls.remove()
             removeActiveModule(NodeID)
         })
-        GainControls.appendChild(remove)
+        NodeControls.appendChild(remove)
 
 
 
