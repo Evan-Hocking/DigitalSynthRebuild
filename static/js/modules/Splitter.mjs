@@ -117,7 +117,7 @@ function buildUI(Node,NodeID){
     var remove = document.createElement('button')
         remove.innerHTML = "Remove"
         remove.addEventListener('click', function (event){
-            GainControls.remove()
+            SplitControls.remove()
             removeActiveModule(NodeID)
         })
         SplitControls.appendChild(remove)
