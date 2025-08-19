@@ -69,23 +69,23 @@ function buildUI(Node,NodeID){
     selectConnection1.addEventListener('change', function (event) {
         const selectedNode = event.target.value;
         const selectedNodeValue = activeNodes[selectedNode]['node'];
-        gainNode.disconnect();
-        gainNode.connect(selectedNodeValue);
+        //Node.disconnect();
+        Node.connect(selectedNodeValue,0);
         selectConnection1.blur()
     });
 
   var selectConnectionLabel1 = document.createElement('label');
     selectConnectionLabel1.innerHTML = 'Connect to';
     selectConnectionLabel1.setAttribute('for', NodeID + '-1-connection');
-    GainControls.appendChild(selectConnectionLabel);
-    GainControls.appendChild(selectConnection);
+    SplitControls.appendChild(selectConnectionLabel);
+    SplitControls.appendChild(selectConnection);
     var remove = document.createElement('button')
         remove.innerHTML = "Remove"
         remove.addEventListener('click', function (event){
-            GainControls.remove()
+            SplitControls.remove()
             removeActiveModule(NodeID)
         })
-        GainControls.appendChild(remove)
+        SplitControls.appendChild(remove)
     
     var selectConnection2 = document.createElement('select');
     selectConnection1.id = NodeID + '-2-connection';
@@ -105,22 +105,22 @@ function buildUI(Node,NodeID){
     selectConnection2.addEventListener('change', function (event) {
         const selectedNode = event.target.value;
         const selectedNodeValue = activeNodes[selectedNode]['node'];
-        gainNode.disconnect();
-        gainNode.connect(selectedNodeValue);
+        //gainNode.disconnect();
+        Node.connect(selectedNodeValue,1);
         selectConnection2.blur()
     });
   var selectConnectionLabel = document.createElement('label');
     selectConnectionLabel.innerHTML = 'Connect to';
     selectConnectionLabel.setAttribute('for', NodeID + '-connection');
-    GainControls.appendChild(selectConnectionLabel);
-    GainControls.appendChild(selectConnection);
+    SplitControls.appendChild(selectConnectionLabel);
+    SplitControls.appendChild(selectConnection);
     var remove = document.createElement('button')
         remove.innerHTML = "Remove"
         remove.addEventListener('click', function (event){
             GainControls.remove()
             removeActiveModule(NodeID)
         })
-        GainControls.appendChild(remove)
+        SplitControls.appendChild(remove)
     
     
 
