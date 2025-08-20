@@ -1,5 +1,4 @@
 let activeNodes = {};
-// import { ctx, removeActiveModule } from '../script.mjs';
 
 let removeActiveModule
 let ctx;

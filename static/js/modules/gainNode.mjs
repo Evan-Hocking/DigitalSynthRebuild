@@ -1,7 +1,7 @@
 let activeNodes = {};
-// import { ctx, removeActiveModule } from '../script.mjs';
 let removeActiveModule;
 let ctx
+
 export function init(Nodes, NodeID, audioCtx, RemActMod) {
     ctx = audioCtx;
     removeActiveModule = RemActMod;

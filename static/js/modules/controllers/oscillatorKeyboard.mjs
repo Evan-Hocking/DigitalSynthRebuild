@@ -1,5 +1,3 @@
-// import { ctx, removeActiveModule } from '../../script.mjs';
-// let activeKey = null;
 let activeFrequency = null;
 const activeKeys = new Map();
 let activeSource = null;
