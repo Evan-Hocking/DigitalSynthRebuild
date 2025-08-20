@@ -1,56 +1,66 @@
 const { app, BrowserWindow, ipcMain, Menu, shell } = require('electron');
 const fs = require('fs');
 const path = require('path');
-const ws = require('windows-shortcuts');
+const windowsShortcuts = require('windows-shortcuts');
 
 const userDir = path.join(app.getPath('documents'), 'OpenSynth');
+const userConfigsDir = path.join(userDir, 'Saves');
+const userModulesDir = path.join(userDir, 'Modules');
 
-if (!fs.existsSync(userDir)) {
-    fs.mkdirSync(userDir, { recursive: true });
+function installApplication() {
+    if (require('electron-squirrel-startup')) {
+        initialiseUserFolder();
+        createDesktopIcon();
+        app.quit();
+    }
 }
-const targetExe = process.execPath; // this is the exe in AppData
-const shortcutPath = path.join(userDir, 'OpenSynth.lnk');
-console.log(targetExe);
-
-// Create or overwrite shortcut
-if (!fs.existsSync(shortcutPath)) {
-    ws.create(shortcutPath, {
-        target: targetExe,
-        desc: 'OpenSynth Shortcut',
-        workingDir: path.dirname(targetExe),
-    });
-}
-
-
-const userConfigsDir = path.join(app.getPath('documents'), 'OpenSynth/Saves');
-if (!fs.existsSync(userConfigsDir)) {
-    fs.mkdirSync(userConfigsDir, { recursive: true });
-}
-const userModulesDir = path.join(app.getPath('documents'), 'OpenSynth/Modules');
-if (!fs.existsSync(userModulesDir)) {
-    fs.mkdirSync(userModulesDir, { recursive: true });
-}
-
-// Always copy/overwrite template.mjs
-const templateSrc = path.join(__dirname, 'static', 'js', 'modules', 'template.mjs');
-const templateDest = path.join(userModulesDir, 'template.mjs');
-if (fs.existsSync(templateSrc)) {
-    fs.copyFileSync(templateSrc, templateDest);
-}
-
-if (require('electron-squirrel-startup')) {
+function createDesktopIcon() {
     const desktopShortcutPath = path.join(app.getPath('desktop'), 'OpenSynth.lnk');
     if (!fs.existsSync(desktopShortcutPath)) {
-        ws.create(desktopShortcutPath, {
+        windowsShortcuts.create(desktopShortcutPath, {
             target: targetExe,
             desc: 'OpenSynth Shortcut',
             workingDir: path.dirname(targetExe),
         });
     }
-    // Handle Squirrel events (install, update, uninstall)
-    // This will exit the app immediately for install/update events
-    app.quit();
 }
+function initialiseUserFolder() {
+    const templateSrc = path.join(__dirname, 'static', 'js', 'modules', 'template.mjs');
+    const templateDest = path.join(userModulesDir, 'template.mjs');
+
+    if (!fs.existsSync(userDir)) {
+        fs.mkdirSync(userDir, { recursive: true });
+    }
+    const targetExe = process.execPath;
+    const shortcutPath = path.join(userDir, 'OpenSynth.lnk');
+
+    // Create or overwrite shortcut
+    if (!fs.existsSync(shortcutPath)) {
+        windowsShortcuts.create(shortcutPath, {
+            target: targetExe,
+            desc: 'OpenSynth Shortcut',
+            workingDir: path.dirname(targetExe),
+        });
+    }
+
+
+
+    if (!fs.existsSync(userConfigsDir)) {
+        fs.mkdirSync(userConfigsDir, { recursive: true });
+    }
+
+    if (!fs.existsSync(userModulesDir)) {
+        fs.mkdirSync(userModulesDir, { recursive: true });
+    }
+
+    // Always copy/overwrite template.mjs
+
+    if (fs.existsSync(templateSrc)) {
+        fs.copyFileSync(templateSrc, templateDest);
+    }
+}
+
+
 
 
 function getModulePaths(directory) {
@@ -84,7 +94,7 @@ function createWindow() {
     win.maximize();
     win.loadFile('index.html');
 }
-const OpenSynthDir = path.join(app.getPath('documents'), 'OpenSynth');
+
 function createMenu() {
     const menuTemplate = [
         {
@@ -104,7 +114,7 @@ function createMenu() {
                         { type: 'separator' },
                         {
                             label: 'Folder',
-                            click: () => shell.openPath(OpenSynthDir)
+                            click: () => shell.openPath(userDir)
                         }
                     ]
                 },
@@ -151,6 +161,14 @@ function createMenu() {
             label: 'Help',
             submenu: [
                 {
+                    label: 'Rebuild User Folders',
+                    click: () => initialiseUserFolder()
+                },
+                {
+                    label: 'Create Desktop Icon',
+                    click: () => createDesktopIcon()
+                },
+                {
                     label: 'Learn More',
                     click: async () => {
                         await shell.openExternal('https://electronjs.org')
@@ -183,6 +201,7 @@ function createMenu() {
 }
 
 app.whenReady().then(() => {
+    installApplication();
     createWindow();
     createMenu();
 });
@@ -190,7 +209,6 @@ app.whenReady().then(() => {
 // IPC handler for module paths
 ipcMain.handle('get-module-paths', async () => {
     const builtInModulesDir = path.join(__dirname, 'static/js/modules');
-    const userModulesDir = path.join(app.getPath('documents'), 'OpenSynth/Modules');
     const builtInModules = getModulePaths(builtInModulesDir).map(p => {
         const absPath = path.join(builtInModulesDir, p);
         return 'file://' + absPath.replace(/\\/g, '/');
