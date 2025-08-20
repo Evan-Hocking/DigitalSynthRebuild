@@ -103,6 +103,8 @@ function buildUI(Node,NodeID){
     selectConnectionLabel.setAttribute('for', NodeID + '-connection');
     NodeControls.appendChild(selectConnectionLabel);
     NodeControls.appendChild(selectConnection);
+
+    
     var remove = document.createElement('button')
         remove.innerHTML = "Remove"
         remove.addEventListener('click', function (event){
