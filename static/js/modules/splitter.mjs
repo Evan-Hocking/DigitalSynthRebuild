@@ -64,7 +64,7 @@ function buildUI(Node, NodeID) {
     SplitterNumberOfOutputs.value = "2";
 
     SplitterNumberOfOutputs.addEventListener('change', function (event) {
-        const currentSplitterOutputs = document.getElementById(id + "-outputSelectors")
+        const currentSplitterOutputs = document.getElementById(NodeID + "-outputSelectors")
         currentSplitterOutputs.remove()
         buildSelectors()
     });
@@ -72,8 +72,8 @@ function buildUI(Node, NodeID) {
     var SplitterNumberOfOutputsLabel = document.createElement('label');
     SplitterNumberOfOutputsLabel.innerHTML = 'Number of Outputs';
     SplitterNumberOfOutputsLabel.setAttribute('for', NodeID + '-ConnectionNumber');
-    SplitControls.appendChild(SplitterNumberOfOutputs);
     SplitControls.appendChild(SplitterNumberOfOutputsLabel);
+    SplitControls.appendChild(SplitterNumberOfOutputs);
 
     buildSelectors();
 
@@ -91,12 +91,13 @@ function buildUI(Node, NodeID) {
 
     function buildSelectors() {
         const splitterOutputs = document.createElement('div')
-        splitterOutputs.id = id + "-outputSelectors"
+        splitterOutputs.id = NodeID + "-outputSelectors"
         SplitControls.appendChild(splitterOutputs)
 
         var options = Object.keys(activeNodes);
         const splitterConnections = {};
-        for (let i = 0; i <= 2; i++) {
+        for (let i = 1; i <= SplitterNumberOfOutputs.value; i++) {
+            var container = document.createElement('div');
             splitterConnections["Connection" + i] = null;
             // Create select element directly
             var selectConnection = document.createElement('select');
@@ -131,14 +132,17 @@ function buildUI(Node, NodeID) {
             var selectConnectionLabel = document.createElement('label');
             selectConnectionLabel.innerHTML = 'Connect to';
             selectConnectionLabel.setAttribute('for', NodeID + '-' + i + '-connection');
-            splitterOutputs.appendChild(selectConnectionLabel);
-            splitterOutputs.appendChild(selectConnection);
+            container.appendChild(selectConnectionLabel);
+            container.appendChild(selectConnection);
+            splitterOutputs.appendChild(container);
         }
         function connectNodes() {
             Node.disconnect()
             var connectionKeys = Object.keys(splitterConnections);
             connectionKeys.forEach(function (connectionKey) {
-                Node.connect(Connections[connectionKey])
+                const targetModule = splitterConnections[connectionKey];
+                if (!targetModule) return;
+                Node.connect(targetModule)
             });
         }
     }
