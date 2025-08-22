@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, Menu, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, shell, nativeTheme } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const windowsShortcuts = require('windows-shortcuts');

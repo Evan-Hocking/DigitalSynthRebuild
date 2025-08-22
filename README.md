@@ -1,7 +1,9 @@
 # Open Synth Rebuild
 
 ## Introduction
-Open Synth Rebuild is a virtual modular synthesizer designed for experimentation and performance. Originally developed as a [university project](https://github.com/Evan-Hocking/_DigitalSynthProject), this version has been rebuilt from the ground up to address architectural issues in the original.
+Open Synth Rebuild is a virtual modular synthesizer designed for experimentation and performance.
+
+Originally developed as a [university project](https://github.com/Evan-Hocking/_DigitalSynthProject), this version has been rebuilt from the ground up to address architectural issues in the original, such as hard coded imports, and and 1 dimensional signal chains.
 
 ## Prerequisites
 - [Node.js](https://nodejs.org/) (v16 or later recommended)
@@ -12,7 +14,7 @@ Open Synth Rebuild is a virtual modular synthesizer designed for experimentation
 1. **Download the Executable:**
 Navigate to [Releases](https://github.com/Evan-Hocking/DigitalSynthRebuild/releases) and download the latest release
 
-2. **Run Executable**
+2. **Run Installer**
 
 ## Dev Installation
 

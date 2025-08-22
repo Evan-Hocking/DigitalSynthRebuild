@@ -217,7 +217,7 @@ function noteDown(note, isSharp, NodeID) {
     if (elem) {
         event.stopPropagation();
         elem.style.background = isSharp ? 'black' : '#ccc';
-        var frequency = getFrequency(noteToMIDI(note))
+        var frequency = midiToFrequency(noteToMIDI(note))
 
 
         // Play the sound with the current gain
@@ -226,7 +226,7 @@ function noteDown(note, isSharp, NodeID) {
 
 }
 
-function getFrequency(midiValue) {
+function midiToFrequency(midiValue) {
     return Math.pow(2, (midiValue - 69) / 12) * 440; //midi to frequency coversion
 }
 
@@ -253,12 +253,16 @@ function removeOptions(selectElement) {
 
 
 function noteToMIDI(noteName) {
-    noteName = noteName.trim();
     const semitoneMap = {
         'C': 0, 'C#': 1, 'Db': 1, 'D': 2, 'D#': 3, 'Eb': 3, 'E': 4,
         'F': 5, 'F#': 6, 'Gb': 6, 'G': 7, 'G#': 8, 'Ab': 8, 'A': 9,
         'A#': 10, 'Bb': 10, 'B': 11
     };
+    const MIDI_OCTAVE_OFFSET = 1;
+    const semitonesInOctave = 12;
+    noteName = noteName.trim();
+
+
     const noteComponents = noteName.match(/^([A-Ga-g])([#b]?)([0-9]+)$/);
     if (!noteComponents) {
         throw new Error('Invalid note name format');
@@ -268,8 +272,7 @@ function noteToMIDI(noteName) {
     if (octave < -1 || octave > 9) {
         throw new Error('Octave out of valid MIDI range (-1 to 9)');
     }
-    const MIDI_OCTAVE_OFFSET = 1;
-    const semitonesInOctave = 12;
+
     if (semitoneMap.hasOwnProperty(note)) {
         // Calculate the MIDI note number based on A440 tuning.
         return semitoneMap[note] + (octave + MIDI_OCTAVE_OFFSET) * semitonesInOctave; // A440 = MIDI note 69

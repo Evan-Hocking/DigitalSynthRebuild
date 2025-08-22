@@ -1,9 +1,21 @@
 :root {
-    --node_background_colour:#e6e6e6;
+    --surface: #FFFFFF;
+    --node_background_colour:#FFFFFF;
     --node_border: 1px solid #ccc;
     --standard_note_bg_colour: white;
     --standard_note_border: 1px solid black;
     --sharp_note_bg_colour: #292929;
+    --node_background_opacity: 100%;
+    --primary: #00ff9d;
+    --primary_variant: #00cc7e;
+    --secondary: #ffcfec;
+    --secondary_variant: #cc9fbc;
+}
+
+[data-theme="dark"]{
+    --surface: #121212;
+    --node_background_opacity: 5%;
+
 }
 
 #controller-panel {
@@ -82,6 +94,7 @@
     direction: rtl;
     width: 8px;
     height: 128px;
+    color: var(--primary);
 }
 
 .module-box {

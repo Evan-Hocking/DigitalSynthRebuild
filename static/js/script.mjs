@@ -1,7 +1,11 @@
-const serverUrl = window.location.origin;
-export const ctx = new (window.AudioContext || window.webkitAudioContext)();
+const ctx = new (window.AudioContext || window.webkitAudioContext)();
 import * as utils from './utils.mjs';
 var moduleCounter = 0; //gives modules a numerical ID
+const { ipcRenderer } = require('electron');
+
+ipcRenderer.on('theme-changed', (event, theme) => {
+  document.documentElement.setAttribute('data-theme', theme);
+});
 
 const moduleDictionary = {};
 const activeModules = {
@@ -105,3 +109,10 @@ function setActiveModules() {
         }
     });
 }
+
+
+
+window.addEventListener('DOMContentLoaded', () => {
+  const theme = window.electronAPI.getStoredTheme(); // via preload
+  document.documentElement.setAttribute('data-theme', theme);
+});
