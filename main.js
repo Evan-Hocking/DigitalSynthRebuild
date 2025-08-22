@@ -127,22 +127,6 @@ function createMenu() {
         {
             label: 'Edit',
             submenu: [
-                {
-                    label: 'Toggle Theme',
-                    click: () => {
-                        const currentTheme = store.get('theme') || 'light';
-                        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
-                        store.set('theme', newTheme);
-                        nativeTheme.themeSource = newTheme;
-
-                        BrowserWindow.getAllWindows().forEach(win => {
-                            win.webContents.send('theme-changed', newTheme);
-                        });
-
-                    }
-                },
-                { type: 'separator' },
                 { role: 'undo' },
                 { role: 'redo' },
                 { type: 'separator' },
@@ -164,7 +148,22 @@ function createMenu() {
                 { role: 'zoomIn' },
                 { role: 'zoomOut' },
                 { type: 'separator' },
-                { role: 'togglefullscreen' }
+                { role: 'togglefullscreen' },
+                {
+                    label: 'Toggle Theme',
+                    click: () => {
+                        const currentTheme = store.get('theme') || 'light';
+                        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+                        store.set('theme', newTheme);
+                        nativeTheme.themeSource = newTheme;
+
+                        BrowserWindow.getAllWindows().forEach(win => {
+                            win.webContents.send('theme-changed', newTheme);
+                        });
+
+                    }
+                }
             ]
         },
         {
@@ -239,7 +238,12 @@ ipcMain.handle('get-module-paths', async () => {
 });
 
 ipcMain.on('set-theme', (even, theme) => {
-    Store.set('theme', theme);
+    store.set('theme', theme);
     nativeTheme.themeSource = theme
 
 })
+
+ipcMain.on('get-stored-theme', (event) => {
+  const theme = store.get('theme') || 'light';
+  event.returnValue = theme;
+});

@@ -32,6 +32,7 @@
   "homepage": "https://github.com/Evan-Hocking/DigitalSynthRebuild#readme",
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1",
+    "electron-store": "^7.0.3",
     "windows-shortcuts": "^0.1.6"
   }
 }
