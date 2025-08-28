@@ -119,7 +119,7 @@ function buildKeys(NodeID) {
     keys.id = NodeID + 'keys';
     keys.classList.add("keys")
     var defaultOctave = 4;
-    var visibleOctaves = 2;
+    var visibleOctaves = 3;
     let keyIndex = 0;
     for (var octave = defaultOctave; octave < defaultOctave + visibleOctaves; octave++) {
         //generates whole object

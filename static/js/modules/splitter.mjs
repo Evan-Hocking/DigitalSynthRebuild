@@ -65,7 +65,7 @@ function buildUI(Node, NodeID) {
 
     SplitterNumberOfOutputs.addEventListener('change', function (event) {
         const currentSplitterOutputs = document.getElementById(NodeID + "-outputSelectors")
-        currentSplitterOutputs.remove()
+        currentSplitterOutputs.innerHTML = ''
         buildSelectors()
     });
 
@@ -90,9 +90,12 @@ function buildUI(Node, NodeID) {
 
 
     function buildSelectors() {
-        const splitterOutputs = document.createElement('div')
-        splitterOutputs.id = NodeID + "-outputSelectors"
-        SplitControls.appendChild(splitterOutputs)
+        var splitterOutputs = document.getElementById(NodeID + "-outputSelectors")
+        if (!splitterOutputs) {
+            splitterOutputs = document.createElement('div');
+            splitterOutputs.id = NodeID + "-outputSelectors"
+            SplitControls.appendChild(splitterOutputs);
+        }
 
         var options = Object.keys(activeNodes);
         const splitterConnections = {};
