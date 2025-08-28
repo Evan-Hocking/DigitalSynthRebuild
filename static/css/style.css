@@ -1,21 +1,25 @@
 :root {
     --surface: #FFFFFF;
-    --node_background_colour:#FFFFFF;
-    --node_border: 1px solid #ccc;
+    --node_background_colour: #FFFFFF;
+    --node_border: 1px solid #fff;
     --standard_note_bg_colour: white;
     --standard_note_border: 1px solid black;
     --sharp_note_bg_colour: #292929;
     --node_background_opacity: 100%;
-    --primary: #00ff9d;
-    --primary_variant: #00cc7e;
-    --secondary: #ffcfec;
-    --secondary_variant: #cc9fbc;
+    --primary: #f94c57;
+    --primary_variant: #de1f36;
+    --secondary: #f9974c;
+    --secondary_variant: #ffd262;
+    --module_boarder_shadow: 0 1px 1px 0 rgba(66, 66, 66, 0.08), 0 1px 3px 1px rgba(66, 66, 66, 0.16);
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
-[data-theme="dark"]{
+[data-theme="dark"] {
     --surface: #121212;
     --node_background_opacity: 5%;
-
+    --module_boarder_shadow: null;
+    /* --primary:#00ff9d; */
+    /* --primary_variant:#00cc7e; */
 }
 
 #controller-panel {
@@ -58,12 +62,15 @@
 .module {
     position: relative;
     background: var(--node_background_colour);
-    border-radius: 10px;
+    box-shadow: var(--module_boarder_shadow);
+    border-radius: 5px;
     border: var(--node_border);
     padding-left: 5px;
     padding-right: 5px;
     padding-bottom: 5px;
-    height: auto;         /* Important if parent tries to stretch it */
+    height: auto;
+    /* Important if parent tries to stretch it */
+    padding: 5px;
 }
 
 #module-panel .module {
@@ -99,13 +106,33 @@
 
 .module-box {
     display: inline-flex;
-    justify-content: center; /* center horizontally */
-    align-items: center; /* center vertically */
+    justify-content: center;
+    /* center horizontally */
+    align-items: center;
+    /* center vertically */
     background: var(--node_background_colour);
     border-radius: 10px;
-    border: var(--node_border); 
+    border: var(--node_border);
     padding-left: 5px;
     padding-right: 5px;
     padding-bottom: 5px;
     height: fit-content;
-    }
+}
+
+button {
+    border-radius: 5px;
+    --btn_margin: 5px;
+    margin-left: var(--btn_margin);
+    margin-right: var(--btn_margin);
+    margin-bottom: var(--btn_margin);
+    padding: var(--btn_margin);
+    background-color: var(--primary);
+    border: none;
+    color:#ffffff;
+}
+button:hover {
+    background-color: var(--primary_variant);
+}
+h1 { 
+    font-weight: normal;
+}
