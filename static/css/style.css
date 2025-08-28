@@ -5,7 +5,7 @@
     --standard_note_bg_colour: white;
     --standard_note_border: 1px solid black;
     --sharp_note_bg_colour: #292929;
-    --node_background_opacity: 100%;
+    --node_background_opacity: 1;
     --primary: #f94c57;
     --primary_variant: #de1f36;
     --secondary: #f9974c;
@@ -61,9 +61,11 @@
 
 .module {
     position: relative;
-    background: var(--node_background_colour);
+
     box-shadow: var(--module_boarder_shadow);
     border-radius: 5px;
+    background:  rgba(var(--node_background_colour), var(--node_background_opacity));
+    border-radius: 10px;
     border: var(--node_border);
     padding-left: 5px;
     padding-right: 5px;

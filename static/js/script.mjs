@@ -1,10 +1,15 @@
 const ctx = new (window.AudioContext || window.webkitAudioContext)();
 import * as utils from './utils.mjs';
 var moduleCounter = 0; //gives modules a numerical ID
-const { ipcRenderer } = require('electron');
+// const { ipcRenderer } = require('electron');
 
-ipcRenderer.on('theme-changed', (event, theme) => {
+// ipcRenderer.on('theme-changed', (event, theme) => {
+//   document.documentElement.setAttribute('data-theme', theme);
+// });
+
+window.electronAPI.onThemeChanged((_event, theme) => {
   document.documentElement.setAttribute('data-theme', theme);
+  console.log("Theme changed to:", theme);
 });
 
 const moduleDictionary = {};
@@ -113,6 +118,6 @@ function setActiveModules() {
 
 
 window.addEventListener('DOMContentLoaded', () => {
-  const theme = window.electronAPI.getStoredTheme(); // via preload
+  const theme = window.electronAPI.getStoredTheme();
   document.documentElement.setAttribute('data-theme', theme);
 });
