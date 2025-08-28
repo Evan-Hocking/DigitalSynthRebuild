@@ -6,10 +6,10 @@
     --standard_note_border: 1px solid black;
     --sharp_note_bg_colour: #292929;
     --node_background_opacity: 1;
-    --field_background_opacity:1;
+    --field_background_opacity: 1;
     --primary: #f94c57;
     --primary_variant: #de1f36;
-    --primary_variant2:#f94c57;
+    --primary_variant2: #f94c57;
     --secondary: #f9974c;
     --secondary_variant: #ffd262;
     --module_boarder_shadow: 0 1px 1px 0 rgba(66, 66, 66, 0.08), 0 1px 3px 1px rgba(66, 66, 66, 0.16);
@@ -19,7 +19,7 @@
 [data-theme="dark"] {
     --surface: #121212;
     --node_background_opacity: 5%;
-    --field_background_opacity:10%;
+    --field_background_opacity: 10%;
     --module_boarder_shadow: null;
     /* --primary:#00ff9d; */
     /* --primary_variant:#00cc7e; */
@@ -27,10 +27,10 @@
 
 #controller-panel {
     position: relative;
-    /* Change from absolute to relative positioning */
-    max-width: 721px;
+
+    /* max-width: 721px; */
     margin-top: 20px;
-    /* Add margin-top to create space between containers */
+
 }
 
 
@@ -62,7 +62,7 @@
     left: 68%;
 }
 
-.module {
+/* .module {
     position: relative;
 
     box-shadow: var(--module_boarder_shadow);
@@ -74,9 +74,44 @@
     padding-right: 5px;
     padding-bottom: 5px;
     height: auto;
-    /* Important if parent tries to stretch it */
+
     padding: 5px;
 }
+
+.module-box {
+    display: inline-flex;
+    justify-content: center;
+
+    align-items: center;
+
+    background: var(--node_background_colour);
+    border-radius: 10px;
+    border: var(--node_border);
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    height: fit-content;
+} */
+
+.module {
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    box-shadow: var(--module_boarder_shadow);
+    border-radius: 10px;
+    background: rgba(var(--node_background_colour), var(--node_background_opacity));
+    border: var(--node_border);
+
+    /* padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px; */
+    padding: 5px;
+    height: auto;
+    /* or fit-content if needed */
+}
+
 
 #module-panel .module {
     display: flex;
@@ -109,20 +144,7 @@
     color: var(--primary);
 }
 
-.module-box {
-    display: inline-flex;
-    justify-content: center;
-    /* center horizontally */
-    align-items: center;
-    /* center vertically */
-    background: var(--node_background_colour);
-    border-radius: 10px;
-    border: var(--node_border);
-    padding-left: 5px;
-    padding-right: 5px;
-    padding-bottom: 5px;
-    height: fit-content;
-}
+
 
 button {
     border-radius: 5px;
@@ -133,21 +155,23 @@ button {
     padding: var(--btn_margin);
     background-color: var(--primary);
     border: none;
-    color:#ffffff;
+    color: #ffffff;
 }
+
 button:hover {
     background-color: var(--primary_variant);
 }
+
 button:active {
     color: #f7f7f7;
     background-color: #e54c5e;
 }
 
-h1 { 
+h1 {
     font-weight: normal;
 }
 
-select{
+select {
     padding: 5px;
     border-radius: 5px;
     box-shadow: var(--module_boarder_shadow);
@@ -155,4 +179,3 @@ select{
     background: var(--surface);
     opacity: var(--field_background_opacity);
 }
-
