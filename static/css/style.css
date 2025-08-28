@@ -6,8 +6,10 @@
     --standard_note_border: 1px solid black;
     --sharp_note_bg_colour: #292929;
     --node_background_opacity: 1;
+    --field_background_opacity:1;
     --primary: #f94c57;
     --primary_variant: #de1f36;
+    --primary_variant2:#f94c57;
     --secondary: #f9974c;
     --secondary_variant: #ffd262;
     --module_boarder_shadow: 0 1px 1px 0 rgba(66, 66, 66, 0.08), 0 1px 3px 1px rgba(66, 66, 66, 0.16);
@@ -17,6 +19,7 @@
 [data-theme="dark"] {
     --surface: #121212;
     --node_background_opacity: 5%;
+    --field_background_opacity:10%;
     --module_boarder_shadow: null;
     /* --primary:#00ff9d; */
     /* --primary_variant:#00cc7e; */
@@ -135,6 +138,21 @@ button {
 button:hover {
     background-color: var(--primary_variant);
 }
+button:active {
+    color: #f7f7f7;
+    background-color: #e54c5e;
+}
+
 h1 { 
     font-weight: normal;
 }
+
+select{
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: var(--module_boarder_shadow);
+    border: none;
+    background: var(--surface);
+    opacity: var(--field_background_opacity);
+}
+
