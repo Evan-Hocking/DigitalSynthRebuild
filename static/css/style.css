@@ -153,6 +153,11 @@ select{
     color: var(--on_surface);
 }
 
+option {
+    color: var(--on_surface);
+    background-color: rgba(var(--node_background_colour), var(--field_background_opacity));
+
+}
 .module-box {
     display: inline-flex;
     justify-content: center; /* center horizontally */
