@@ -2,6 +2,8 @@ let activeNodes = {};
 let removeActiveModule;
 let ctx
 
+import { createADSR } from './ADSR.mjs';
+
 export function init(Nodes, NodeID, audioCtx, RemActMod) {
     ctx = audioCtx;
     removeActiveModule = RemActMod;
@@ -41,6 +43,9 @@ export function updateActiveNodes(Nodes, NodeID){
 }
 
 function buildUI(gainNode,NodeID){
+    const envelopes = {
+        gain: createADSR(ctx, gainNode.gain)
+    }
     var modulePanel = document.getElementById('module-panel');
     var GainControls = document.createElement('div');
     GainControls.id = NodeID + '-Controls';
@@ -62,11 +67,13 @@ function buildUI(gainNode,NodeID){
     gain.value = 50;
     GainControls.appendChild(gain);
     gain.addEventListener('input', function (event) {
-        const gainModifer = 20; //divides result to keep gain in an appropriate range, can be configured to change the maximum possible gain -> MaxGain = 100/gainModifier
+        const gainModifer = 20;
         const gainValue = event.target.value / gainModifer;
-        gainNode.gain.setValueAtTime(gainValue, ctx.currentTime);
-        gain.blur()
+
+        envelopes.gain.trigger(gainValue);
+        gain.blur();
     });
+
     var gainLabel = document.createElement('label');
     gainLabel.innerHTML = 'Gain';
     gainLabel.setAttribute('for', 'gain');
