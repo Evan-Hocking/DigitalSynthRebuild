@@ -232,7 +232,7 @@ function midiToFrequency(midiValue) {
 
 
 function playSound(frequency, NodeID) {
-    const gainModifer = 20; //divides result to keep gain in an appropriate range, can be configured to change the maximum possible gain -> MaxGain = 100/gainModifier
+    const gainModifer = 100; //divides result to keep gain in an appropriate range, can be configured to change the maximum possible gain -> MaxGain = 100/gainModifier
     oscillatorGain.gain.value = document.getElementById(NodeID + '-gain').value / gainModifer;
     if (activeFrequency) {
         activeSource.frequency.setValueAtTime(frequency, ctx.currentTime);

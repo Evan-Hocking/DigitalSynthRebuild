@@ -107,14 +107,13 @@ function buildVisualiser(Node, NodeID) {
     Node.smoothingTimeConstant = 0.9; // Set the smoothing time constant
     Node.fftSize = 2048;
     const dataArray = new Uint8Array(Node.frequencyBinCount);
-    let c = null;
     const canvas = document.createElement("canvas")
     canvas.id = NodeID+"Canvas"
     canvasContainer = document.getElementById("canvas")
     canvasContainer.appendChild(canvas)
-    document.addEventListener("DOMContentLoaded", function () {
-        c = buildCanvas()
-    });
+    // document.addEventListener("DOMContentLoaded", function () {
+        let c = buildCanvas()
+    // });
 
     // window.addEventListener('resize', () => c = buildCanvas());
 
