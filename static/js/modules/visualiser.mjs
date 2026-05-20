@@ -42,7 +42,7 @@ export function updateActiveNodes(Nodes, NodeID) {
 
 function buildUI(Node, NodeID) {
     buildControlUI(Node, NodeID)
-    buildVisualiser(Node)
+    buildVisualiser(Node,NodeID)
 }
 
 
@@ -103,12 +103,15 @@ function buildControlUI(Node, NodeID) {
 
 }
 
-function buildVisualiser(Node) {
+function buildVisualiser(Node, NodeID) {
     Node.smoothingTimeConstant = 0.9; // Set the smoothing time constant
     Node.fftSize = 2048;
     const dataArray = new Uint8Array(Node.frequencyBinCount);
     let c = null;
-    const canvas = document.getElementById("canvas")
+    const canvas = document.createElement("canvas")
+    canvas.id = NodeID+"Canvas"
+    canvasContainer = document.getElementById("canvas")
+    canvasContainer.appendChild(canvas)
     document.addEventListener("DOMContentLoaded", function () {
         c = buildCanvas()
     });
@@ -149,6 +152,7 @@ function buildVisualiser(Node) {
 
         // Return the canvas context
         return c;
+    
     }
 
 
