@@ -109,12 +109,15 @@ function buildVisualiser(Node) {
     Node.smoothingTimeConstant = 0.9; // Set the smoothing time constant
     Node.fftSize = 2048;
     const dataArray = new Uint8Array(Node.frequencyBinCount);
-    let c = null;
-    document.addEventListener("DOMContentLoaded", function () {
-        c = vis.buildCanvas()
+    const canvas = document.getElementById("canvas");
+let c = buildCanvas();
+
+
+
+    window.addEventListener('resize', () => {
+        c = buildCanvas();
     });
 
-    window.addEventListener('resize', () => c = buildCanvas());
 
     const canvas = document.getElementById("canvas")
 
@@ -173,5 +176,5 @@ function buildVisualiser(Node) {
         requestAnimationFrame(() => draw(analyser, dataArray, c));
 
     };
-    draw(node, dataArray, c)
+    draw(Node, dataArray, c)
 }
