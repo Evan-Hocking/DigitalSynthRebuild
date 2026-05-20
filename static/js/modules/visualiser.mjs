@@ -8,9 +8,7 @@ export function init(Nodes, NodeID, audioCtx, RemActMod) {
     removeActiveModule = RemActMod;
     let Node = ctx.createAnalyser(); //Set to module type
     activeNodes = Nodes;
-    console.log('Active nodes:', activeNodes);
     buildUI(Node, NodeID);
-
     return Node;
 }
 
@@ -109,17 +107,15 @@ function buildVisualiser(Node) {
     Node.smoothingTimeConstant = 0.9; // Set the smoothing time constant
     Node.fftSize = 2048;
     const dataArray = new Uint8Array(Node.frequencyBinCount);
-    const canvas = document.getElementById("canvas");
-let c = buildCanvas();
-
-
-
-    window.addEventListener('resize', () => {
-        c = buildCanvas();
+    let c = null;
+    const canvas = document.getElementById("canvas")
+    document.addEventListener("DOMContentLoaded", function () {
+        c = buildCanvas()
     });
 
+    // window.addEventListener('resize', () => c = buildCanvas());
 
-    const canvas = document.getElementById("canvas")
+    
 
     function buildCanvas() {
         var c = canvas.getContext("2d");
