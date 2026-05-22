@@ -222,6 +222,10 @@ function noteDown(note, isSharp, NodeID) {
 
         // Play the sound with the current gain
         playSound(frequency, NodeID);
+        const event = new CustomEvent("noteDown", {
+            detail: { message: "NoteDown" }
+        });
+        document.dispatchEvent(event);
     }
 
 }
