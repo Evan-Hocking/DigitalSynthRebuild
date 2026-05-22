@@ -205,6 +205,10 @@ function noteUp(note, isSharp, NodeID) {
         var now = ctx.currentTime;
 
         oscillatorGain.gain.value = 0;
+        const event = new CustomEvent("noteUp", {
+            detail: { message: "NoteUp" }
+        });
+        document.dispatchEvent(event);
     }
 
 

@@ -23,5 +23,8 @@ export function createADSR(ctx, audioParam, UIContainer) {
     document.addEventListener("noteDown", (e) => {
         noteDown(e)
     });
+    document.addEventListener("noteUp", (e) => {
+        noteUp(e)
+    });
 
 }
