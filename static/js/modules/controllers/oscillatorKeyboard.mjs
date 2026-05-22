@@ -6,6 +6,8 @@ let activeNodes = {};
 let removeActiveModule;
 let ctx;
 
+import { createADSR } from '../ADSR.mjs';
+
 export function init(Nodes, NodeID, audioCtx, RemActMod) {
     ctx = audioCtx;
     removeActiveModule = RemActMod;
@@ -66,6 +68,22 @@ function buildUI(NodeID) {
     gainLabel.innerHTML = 'Gain';
     gainLabel.setAttribute('for', 'gain');
     oscilattorControls.appendChild(gainLabel);
+
+
+    var gainEnvelopeBtn = document.createElement('button');
+    gainEnvelopeBtn.innerHTML = "Toggle ADSR";
+    gainEnvelopeBtn.addEventListener('click', function (event) {
+        const existingADSR = document.getElementById(oscillatorGain.id + '-ADSR-Controls');
+        if (existingADSR) {
+            existingADSR.remove();
+            setGainValue({ target: { value: gain.value } });
+        } else {
+            createADSR(ctx, oscillatorGain.gain, oscillatorGain.id, oscilattorControls);
+        }
+        oscilattorControls.appendChild(gainEnvelopeBtn);
+    })
+    oscilattorControls.appendChild(gainEnvelopeBtn);
+
 
     var selectConnection = document.createElement('select');
     selectConnection.id = NodeID + '-connection';
@@ -159,8 +177,10 @@ function createKey(keyClass, note, computerKey, NodeID) {
     key.addEventListener('mouseup', function () {
         noteUp(this.dataset.note, this.dataset.note.includes('#'), NodeID)
     })
-    key.addEventListener('mouseout', function () {
-        noteUp(this.dataset.note, this.dataset.note.includes('#'), NodeID)
+    key.addEventListener('mouseout', function (event) {
+        if (event.buttons === 1) { // Only trigger noteUp if the left mouse button is still pressed 
+            noteUp(this.dataset.note, this.dataset.note.includes('#'), NodeID)
+        }
     })
     if (computerKey !== undefined) {
         listenForKeyDown(computerKey, note, () => noteDown(note, note.includes('#'), NodeID))
@@ -219,7 +239,7 @@ function noteDown(note, isSharp, NodeID) {
 
     const elem = document.querySelector(`[data-note="${note}"]`);
     if (elem) {
-        event.stopPropagation();
+        // event.stopPropagation();
         elem.style.background = isSharp ? 'black' : '#ccc';
         var frequency = midiToFrequency(noteToMIDI(note))
 
@@ -241,7 +261,11 @@ function midiToFrequency(midiValue) {
 
 function playSound(frequency, NodeID) {
     const gainModifer = 20; //divides result to keep gain in an appropriate range, can be configured to change the maximum possible gain -> MaxGain = 100/gainModifier
-    oscillatorGain.gain.value = document.getElementById(NodeID + '-gain').value / gainModifer;
+    const existingADSR = document.getElementById(oscillatorGain.id + '-ADSR-Controls');
+    if (!existingADSR) {
+        oscillatorGain.gain.value = document.getElementById(NodeID + '-gain').value / gainModifer;
+    }
+
     if (activeFrequency) {
         activeSource.frequency.setValueAtTime(frequency, ctx.currentTime);
     } else {
@@ -293,7 +317,6 @@ function noteToMIDI(noteName) {
 export function updateActiveNodes(Nodes, NodeID) {
     activeNodes = Nodes;
     var selectConnection = document.getElementById(NodeID + '-connection');
-    console.log(selectConnection)
     var options = Object.keys(activeNodes);
     removeOptions(selectConnection);
     var opt = document.createElement('option');

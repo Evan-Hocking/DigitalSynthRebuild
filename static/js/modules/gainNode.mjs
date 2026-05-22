@@ -2,24 +2,26 @@ let activeNodes = {};
 let removeActiveModule;
 let ctx
 
+import { createADSR } from './ADSR.mjs';
+
 export function init(Nodes, NodeID, audioCtx, RemActMod) {
     ctx = audioCtx;
     removeActiveModule = RemActMod;
     let gainNode = ctx.createGain();
     activeNodes = Nodes;
     console.log('Active nodes:', activeNodes);
-    buildUI(gainNode,NodeID);
+    buildUI(gainNode, NodeID);
     return gainNode;
 }
 
 function removeOptions(selectElement) {
-   var i, L = selectElement.options.length - 1;
-   for(i = L; i >= 0; i--) {
-      selectElement.remove(i);
-   }
+    var i, L = selectElement.options.length - 1;
+    for (i = L; i >= 0; i--) {
+        selectElement.remove(i);
+    }
 }
 
-export function updateActiveNodes(Nodes, NodeID){
+export function updateActiveNodes(Nodes, NodeID) {
     activeNodes = Nodes;
     console.log('Active nodes:', activeNodes);
     var selectConnection = document.getElementById(NodeID + '-connection');
@@ -37,14 +39,14 @@ export function updateActiveNodes(Nodes, NodeID){
         opt.text = option.charAt(0).toUpperCase() + option.slice(1);
         selectConnection.appendChild(opt);
     });
-    
+
 }
 
-function buildUI(gainNode,NodeID){
+function buildUI(gainNode, NodeID) {
     var modulePanel = document.getElementById('module-panel');
     var GainControls = document.createElement('div');
     GainControls.id = NodeID + '-Controls';
-    
+
     GainControls.className = 'module';
     GainControls.classList.add("module-box")
     modulePanel.appendChild(GainControls);
@@ -56,21 +58,47 @@ function buildUI(gainNode,NodeID){
     gain.classList.add("vertical-slider")
     gain.setAttribute('orient', 'vertical');
     gain.type = 'range';
-    gain.id = NodeID;
+    gain.id = NodeID + '-gain';
     gain.min = 0;
     gain.max = 100;
     gain.value = 50;
     GainControls.appendChild(gain);
     gain.addEventListener('input', function (event) {
+        if (!isADSREnabled(this.id)) {
+            setGainValue(event)
+        }
+
+    });
+
+    function setGainValue(event) {
         const gainModifer = 100; //divides result to keep gain in an appropriate range, can be configured to change the maximum possible gain -> MaxGain = 100/gainModifier
         const gainValue = event.target.value / gainModifer;
         gainNode.gain.setValueAtTime(gainValue, ctx.currentTime);
         gain.blur()
-    });
+    }
+
     var gainLabel = document.createElement('label');
     gainLabel.innerHTML = 'Gain';
     gainLabel.setAttribute('for', 'gain');
     GainControls.appendChild(gainLabel);
+    
+    function isADSREnabled(NodeID) {
+        const existingADSR = document.getElementById(NodeID + '-ADSR');
+        return !!existingADSR;
+    }
+    var gainEnvelopeBtn = document.createElement('button');
+    gainEnvelopeBtn.innerHTML = "Toggle ADSR";
+    gainEnvelopeBtn.addEventListener('click', function (event) {
+        const existingADSR = document.getElementById(gainNode.id + '-ADSR-Controls');
+        if (existingADSR) {
+            existingADSR.remove();
+            setGainValue({ target: { value: gain.value } });
+        } else {
+            createADSR(ctx, gainNode.gain, gainNode.id, GainControls);
+        }
+        GainControls.appendChild(gainEnvelopeBtn);
+    })
+    GainControls.appendChild(gainEnvelopeBtn);
 
 
     var selectConnection = document.createElement('select');
@@ -95,19 +123,19 @@ function buildUI(gainNode,NodeID){
         gainNode.connect(selectedNodeValue);
         selectConnection.blur()
     });
-    
+
     var selectConnectionLabel = document.createElement('label');
     selectConnectionLabel.innerHTML = 'Connect to';
     selectConnectionLabel.setAttribute('for', NodeID + '-connection');
     GainControls.appendChild(selectConnectionLabel);
     GainControls.appendChild(selectConnection);
     var remove = document.createElement('button')
-        remove.innerHTML = "Remove"
-        remove.addEventListener('click', function (event){
-            GainControls.remove()
-            removeActiveModule(NodeID)
-        })
-        GainControls.appendChild(remove)
+    remove.innerHTML = "Remove"
+    remove.addEventListener('click', function (event) {
+        GainControls.remove()
+        removeActiveModule(NodeID)
+    })
+    GainControls.appendChild(remove)
 
 
 
