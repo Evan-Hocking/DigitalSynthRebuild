@@ -109,7 +109,7 @@ function buildVisualiser(Node, NodeID) {
     const dataArray = new Uint8Array(Node.frequencyBinCount);
     const canvas = document.createElement("canvas")
     canvas.id = NodeID+"Canvas"
-    canvasContainer = document.getElementById("canvas")
+    var canvasContainer = document.getElementById("canvas")
     canvasContainer.appendChild(canvas)
     // document.addEventListener("DOMContentLoaded", function () {
         let c = buildCanvas()
@@ -136,7 +136,7 @@ function buildVisualiser(Node, NodeID) {
 
             c.fillStyle = "#181818";
             c.fillRect(0, 0, canvas.width, canvas.height);
-            c.strokeStyle = "var(--Primary);";
+            c.strokeStyle = "#00ff00";
             c.beginPath();
             c.moveTo(0, canvas.height / 2);
             c.lineTo(canvas.width, canvas.height / 10);
