@@ -6,7 +6,7 @@ let activeNodes = {};
 let removeActiveModule;
 let ctx;
 
-import { createADSR } from '../ADSR.mjs';
+import { createADSR, removeADSR } from '../ADSR.mjs';
 
 export function init(Nodes, NodeID, audioCtx, RemActMod) {
     ctx = audioCtx;
@@ -73,13 +73,15 @@ function buildUI(NodeID) {
     var gainEnvelopeBtn = document.createElement('button');
     gainEnvelopeBtn.innerHTML = "Toggle ADSR";
     gainEnvelopeBtn.addEventListener('click', function (event) {
-        const existingADSR = document.getElementById(oscillatorGain.id + '-ADSR-Controls');
+        const existingADSR = document.getElementById(gain.id + '-ADSR-Controls');
         if (existingADSR) {
             existingADSR.remove();
-            setGainValue({ target: { value: gain.value } });
-        } else {
-            createADSR(ctx, oscillatorGain.gain, oscillatorGain.id, oscilattorControls);
+            removeADSR(gain.id);
+            oscillatorGain.gain.value = 0;
+        }else{
+            createADSR(ctx, oscillatorGain.gain, gain.id, oscilattorControls);
         }
+        console.log("ADSR toggled for", gain.id);
         oscilattorControls.appendChild(gainEnvelopeBtn);
     })
     oscilattorControls.appendChild(gainEnvelopeBtn);
@@ -223,8 +225,11 @@ function noteUp(note, isSharp, NodeID) {
         noteDown(lastNote, lastNote.includes('#'), NodeID)
     } else {
         var now = ctx.currentTime;
-
-        oscillatorGain.gain.value = 0;
+        const existingADSR = document.getElementById(NodeID + '-gain-ADSR-Controls');
+        if (!existingADSR) {
+            oscillatorGain.gain.value = 0;
+        }
+        
         const event = new CustomEvent("noteUp", {
             detail: { message: "NoteUp" }
         });
@@ -260,8 +265,8 @@ function midiToFrequency(midiValue) {
 
 
 function playSound(frequency, NodeID) {
-    const gainModifer = 20; //divides result to keep gain in an appropriate range, can be configured to change the maximum possible gain -> MaxGain = 100/gainModifier
-    const existingADSR = document.getElementById(oscillatorGain.id + '-ADSR-Controls');
+    const gainModifer = 100; //divides result to keep gain in an appropriate range, can be configured to change the maximum possible gain -> MaxGain = 100/gainModifier
+    const existingADSR = document.getElementById(NodeID + '-gain-ADSR-Controls');
     if (!existingADSR) {
         oscillatorGain.gain.value = document.getElementById(NodeID + '-gain').value / gainModifer;
     }

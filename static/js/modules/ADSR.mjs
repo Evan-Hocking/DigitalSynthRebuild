@@ -1,3 +1,5 @@
+let activeEnvelopes = {};
+
 export function createADSR(ctx, audioParam, NodeID, UIContainer) {
     function buildUI() {
         var ADSRControls = document.createElement('div');
@@ -15,7 +17,7 @@ export function createADSR(ctx, audioParam, NodeID, UIContainer) {
         base.type = 'range';
         base.id = NodeID + '-ADSR-base';
         base.min = 0;
-        base.max = 1;
+        base.max = 100;
         base.value = 0;
         ADSRControls.appendChild(base);
 
@@ -29,8 +31,8 @@ export function createADSR(ctx, audioParam, NodeID, UIContainer) {
         attack.type = 'range';
         attack.id = NodeID + '-ADSR-attack';
         attack.min = 0;
-        attack.max = 5;
-        attack.value = 0.1;
+        attack.max = 100;
+        attack.value = 5;
         ADSRControls.appendChild(attack);
 
         //decay slider
@@ -43,8 +45,8 @@ export function createADSR(ctx, audioParam, NodeID, UIContainer) {
         decay.type = 'range';
         decay.id = NodeID + '-ADSR-decay';
         decay.min = 0;
-        decay.max = 5;
-        decay.value = 0.1;
+        decay.max = 100;
+        decay.value = 10;
         ADSRControls.appendChild(decay);
 
         //sustain slider
@@ -71,8 +73,8 @@ export function createADSR(ctx, audioParam, NodeID, UIContainer) {
         release.type = 'range';
         release.id = NodeID + '-ADSR-release';
         release.min = 0;
-        release.max = 5;
-        release.value = 0.1;
+        release.max = 100;
+        release.value = 10;
         ADSRControls.appendChild(release);
 
 
@@ -80,40 +82,54 @@ export function createADSR(ctx, audioParam, NodeID, UIContainer) {
         UIContainer.appendChild(ADSRControls);
     }
 
-    function init() {
+    function init(NodeID) {
+        activeEnvelopes[NodeID] = audioParam;
+        console.log("Active Envelopes:", activeEnvelopes);
         buildUI();
         document.addEventListener("noteDown", (e) => {
-            // console.log(NodeID)
-            console.log(document.getElementById(NodeID))
-            // var paramvalue = document.getElementById(NodeID).value;
+            for (let key in activeEnvelopes) {
+                NodeID = key;
+                audioParam = activeEnvelopes[key];
 
-            var attack = document.getElementById(NodeID + '-ADSR-attack').value;
-            var decay = document.getElementById(NodeID + '-ADSR-decay').value;
-            var sustain = document.getElementById(NodeID + '-ADSR-sustain').value;
-            console.log(NodeID + '-ADSR-attack', attack)
+                var paramvalue = document.getElementById(NodeID).value/100;
 
-            console.log("Attack:", attack, "Decay:", decay, "Sustain:", sustain, "ParamValue:", paramvalue);
-            var now = ctx.currentTime;
 
-            audioParam.linearRampToValueAtTime(paramvalue, now + attack);
-            audioParam.linearRampToValueAtTime(sustain * paramvalue, now + attack + decay);
+
+                var attack = document.getElementById(NodeID + '-ADSR-attack').value/20;
+                var decay = document.getElementById(NodeID + '-ADSR-decay').value/20;
+                var sustain = document.getElementById(NodeID + '-ADSR-sustain').value/100;
+
+                var now = ctx.currentTime;
+
+                console.log(paramvalue, attack, decay, sustain, now);
+                audioParam.cancelScheduledValues(now);
+                audioParam.linearRampToValueAtTime(audioParam.value, now);
+                audioParam.linearRampToValueAtTime(paramvalue, now + attack);
+                audioParam.linearRampToValueAtTime(sustain * paramvalue, now + attack + decay);
+                
+            }
         });
 
 
 
         document.addEventListener("noteUp", (e) => {
-            // console.log(NodeID)
-            var paramvalue = audioParam.value;
-            var start = document.getElementById(NodeID + '-ADSR-base').value;
-            var release = document.getElementById(NodeID + '-ADSR-release').value;
-            // console.log("Release:", release, "Start:", start);
-            audioParam.linearRampToValueAtTime(paramvalue * start, ctx.currentTime + release);
+            for (let key in activeEnvelopes) {
+                NodeID = key;
+                var paramvalue = document.getElementById(NodeID).value/100;
+                var start = document.getElementById(NodeID + '-ADSR-base').value/100;
+                var release = document.getElementById(NodeID + '-ADSR-release').value/20;
+                audioParam.cancelScheduledValues(ctx.currentTime);
+                audioParam.linearRampToValueAtTime(audioParam.value, ctx.currentTime);
+                audioParam.linearRampToValueAtTime(paramvalue * start, ctx.currentTime + release);
+            }
         });
     }
 
-    init();
+    init(NodeID);
 
 
 }
 
-
+export function removeADSR(NodeID) {
+    delete activeEnvelopes[NodeID];
+}
