@@ -8,9 +8,7 @@ export function init(Nodes, NodeID, audioCtx, RemActMod) {
     removeActiveModule = RemActMod;
     let Node = ctx.createAnalyser(); //Set to module type
     activeNodes = Nodes;
-    console.log('Active nodes:', activeNodes);
     buildUI(Node, NodeID);
-
     return Node;
 }
 
@@ -44,7 +42,7 @@ export function updateActiveNodes(Nodes, NodeID) {
 
 function buildUI(Node, NodeID) {
     buildControlUI(Node, NodeID)
-    buildVisualiser(Node)
+    buildVisualiser(Node,NodeID)
 }
 
 
@@ -105,18 +103,21 @@ function buildControlUI(Node, NodeID) {
 
 }
 
-function buildVisualiser(Node) {
+function buildVisualiser(Node, NodeID) {
     Node.smoothingTimeConstant = 0.9; // Set the smoothing time constant
     Node.fftSize = 2048;
     const dataArray = new Uint8Array(Node.frequencyBinCount);
-    let c = null;
-    document.addEventListener("DOMContentLoaded", function () {
-        c = vis.buildCanvas()
-    });
+    const canvas = document.createElement("canvas")
+    canvas.id = NodeID+"Canvas"
+    var canvasContainer = document.getElementById("canvas")
+    canvasContainer.appendChild(canvas)
+    // document.addEventListener("DOMContentLoaded", function () {
+        let c = buildCanvas()
+    // });
 
-    window.addEventListener('resize', () => c = buildCanvas());
+    // window.addEventListener('resize', () => c = buildCanvas());
 
-    const canvas = document.getElementById("canvas")
+    
 
     function buildCanvas() {
         var c = canvas.getContext("2d");
@@ -135,7 +136,7 @@ function buildVisualiser(Node) {
 
             c.fillStyle = "#181818";
             c.fillRect(0, 0, canvas.width, canvas.height);
-            c.strokeStyle = "var(--Primary);";
+            c.strokeStyle = "#00ff00";
             c.beginPath();
             c.moveTo(0, canvas.height / 2);
             c.lineTo(canvas.width, canvas.height / 10);
@@ -150,6 +151,7 @@ function buildVisualiser(Node) {
 
         // Return the canvas context
         return c;
+    
     }
 
 
@@ -173,5 +175,5 @@ function buildVisualiser(Node) {
         requestAnimationFrame(() => draw(analyser, dataArray, c));
 
     };
-    draw(node, dataArray, c)
+    draw(Node, dataArray, c)
 }

@@ -266,6 +266,7 @@ function midiToFrequency(midiValue) {
 
 function playSound(frequency, NodeID) {
     const gainModifer = 100; //divides result to keep gain in an appropriate range, can be configured to change the maximum possible gain -> MaxGain = 100/gainModifier
+
     const existingADSR = document.getElementById(NodeID + '-gain-ADSR-Controls');
     if (!existingADSR) {
         oscillatorGain.gain.value = document.getElementById(NodeID + '-gain').value / gainModifer;

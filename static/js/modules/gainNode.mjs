@@ -71,6 +71,7 @@ function buildUI(gainNode, NodeID) {
     });
 
     function setGainValue(event) {
+
         const gainModifer = 100; //divides result to keep gain in an appropriate range, can be configured to change the maximum possible gain -> MaxGain = 100/gainModifier
         const gainValue = event.target.value / gainModifer;
         gainNode.gain.setValueAtTime(gainValue, ctx.currentTime);
