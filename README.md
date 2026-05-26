@@ -3,18 +3,24 @@
 ## Introduction
 Open Synth Rebuild is a virtual modular synthesizer designed for experimentation and performance.
 
+Built on the JavaScript [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
+
 Originally developed as a [university project](https://github.com/Evan-Hocking/_DigitalSynthProject), this version has been rebuilt from the ground up to address architectural issues in the original, such as hard coded imports, and and 1 dimensional signal chains.
 
 ## Prerequisites
 - [Node.js](https://nodejs.org/) (v16 or later recommended)
-- [Git](https://git-scm.com/) (for cloning the repository)
+
+  **This is only needed if you wish to download and run the original source code. Follow End User Installation to install**
 
 ## End User Installation
 
 1. **Download the Executable:**
-Navigate to [Releases](https://github.com/Evan-Hocking/DigitalSynthRebuild/releases) and download the latest release
+Navigate to [Releases](https://github.com/Evan-Hocking/DigitalSynthRebuild/releases) and download the latest installer
 
 2. **Run Installer**
+
+3. **A Folder Documents/Open Synth will be created containing the program and accompanying files.
+The program will launch automatically after installation**
 
 ## Dev Installation
 
