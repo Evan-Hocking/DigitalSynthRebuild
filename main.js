@@ -69,7 +69,7 @@ function getModulePaths(directory) {
     let modulePaths = [];
     function walk(dir) {
         fs.readdirSync(dir).forEach(file => {
-            if (file === 'template.mjs') return; // Ignore the template
+            if (file === 'template.mjs' || file === 'ADSR.mjs') return; // Ignore the template and ADSR Modules
             const fullPath = path.join(dir, file);
             if (fs.statSync(fullPath).isDirectory()) {
                 walk(fullPath);

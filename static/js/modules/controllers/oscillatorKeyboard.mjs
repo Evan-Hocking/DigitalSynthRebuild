@@ -82,7 +82,7 @@ function buildUI(NodeID) {
             createADSR(ctx, oscillatorGain.gain, gain.id, oscilattorControls);
         }
         console.log("ADSR toggled for", gain.id);
-        oscilattorControls.appendChild(gainEnvelopeBtn);
+        
     })
     oscilattorControls.appendChild(gainEnvelopeBtn);
 
