@@ -6,6 +6,8 @@ let activeNodes = {};
 let removeActiveModule;
 let ctx;
 
+import { createADSR, removeADSR } from '../ADSR.mjs';
+
 export function init(Nodes, NodeID, audioCtx, RemActMod) {
     ctx = audioCtx;
     removeActiveModule = RemActMod;
@@ -66,6 +68,24 @@ function buildUI(NodeID) {
     gainLabel.innerHTML = 'Gain';
     gainLabel.setAttribute('for', 'gain');
     oscilattorControls.appendChild(gainLabel);
+
+
+    var gainEnvelopeBtn = document.createElement('button');
+    gainEnvelopeBtn.innerHTML = "Toggle ADSR";
+    gainEnvelopeBtn.addEventListener('click', function (event) {
+        const existingADSR = document.getElementById(gain.id + '-ADSR-Controls');
+        if (existingADSR) {
+            existingADSR.remove();
+            removeADSR(gain.id);
+            oscillatorGain.gain.value = 0;
+        }else{
+            createADSR(ctx, oscillatorGain.gain, gain.id, oscilattorControls);
+        }
+        console.log("ADSR toggled for", gain.id);
+        oscilattorControls.appendChild(gainEnvelopeBtn);
+    })
+    oscilattorControls.appendChild(gainEnvelopeBtn);
+
 
     var selectConnection = document.createElement('select');
     selectConnection.id = NodeID + '-connection';
@@ -159,8 +179,10 @@ function createKey(keyClass, note, computerKey, NodeID) {
     key.addEventListener('mouseup', function () {
         noteUp(this.dataset.note, this.dataset.note.includes('#'), NodeID)
     })
-    key.addEventListener('mouseout', function () {
-        noteUp(this.dataset.note, this.dataset.note.includes('#'), NodeID)
+    key.addEventListener('mouseout', function (event) {
+        if (event.buttons === 1) { // Only trigger noteUp if the left mouse button is still pressed 
+            noteUp(this.dataset.note, this.dataset.note.includes('#'), NodeID)
+        }
     })
     if (computerKey !== undefined) {
         listenForKeyDown(computerKey, note, () => noteDown(note, note.includes('#'), NodeID))
@@ -203,8 +225,15 @@ function noteUp(note, isSharp, NodeID) {
         noteDown(lastNote, lastNote.includes('#'), NodeID)
     } else {
         var now = ctx.currentTime;
-
-        oscillatorGain.gain.value = 0;
+        const existingADSR = document.getElementById(NodeID + '-gain-ADSR-Controls');
+        if (!existingADSR) {
+            oscillatorGain.gain.value = 0;
+        }
+        
+        const event = new CustomEvent("noteUp", {
+            detail: { message: "NoteUp" }
+        });
+        document.dispatchEvent(event);
     }
 
 
@@ -215,13 +244,17 @@ function noteDown(note, isSharp, NodeID) {
 
     const elem = document.querySelector(`[data-note="${note}"]`);
     if (elem) {
-        event.stopPropagation();
+        // event.stopPropagation();
         elem.style.background = isSharp ? 'black' : '#ccc';
         var frequency = midiToFrequency(noteToMIDI(note))
 
 
         // Play the sound with the current gain
         playSound(frequency, NodeID);
+        const event = new CustomEvent("noteDown", {
+            detail: { message: "NoteDown" }
+        });
+        document.dispatchEvent(event);
     }
 
 }
@@ -233,7 +266,12 @@ function midiToFrequency(midiValue) {
 
 function playSound(frequency, NodeID) {
     const gainModifer = 100; //divides result to keep gain in an appropriate range, can be configured to change the maximum possible gain -> MaxGain = 100/gainModifier
-    oscillatorGain.gain.value = document.getElementById(NodeID + '-gain').value / gainModifer;
+
+    const existingADSR = document.getElementById(NodeID + '-gain-ADSR-Controls');
+    if (!existingADSR) {
+        oscillatorGain.gain.value = document.getElementById(NodeID + '-gain').value / gainModifer;
+    }
+
     if (activeFrequency) {
         activeSource.frequency.setValueAtTime(frequency, ctx.currentTime);
     } else {
@@ -285,7 +323,6 @@ function noteToMIDI(noteName) {
 export function updateActiveNodes(Nodes, NodeID) {
     activeNodes = Nodes;
     var selectConnection = document.getElementById(NodeID + '-connection');
-    console.log(selectConnection)
     var options = Object.keys(activeNodes);
     removeOptions(selectConnection);
     var opt = document.createElement('option');

@@ -1,0 +1,5 @@
+ADSR PLAN
+Scrapping what I have currently.
+
+Will use an event driven architecture, creating an event from the controller which is listend for by the rest of the modules.
+There will not be a constant envelope, it will only be used when toggle is true
