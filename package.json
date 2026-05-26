@@ -1,6 +1,6 @@
 {
   "name": "digitalsynthrebuild",
-  "version": "0.1.2",
+  "version": "0.3.0",
   "description": "Open Synth v2",
   "main": "main.js",
   "devDependencies": {
