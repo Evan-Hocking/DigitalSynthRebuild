@@ -14,6 +14,8 @@
     --secondary: #f9974c;
     --secondary_variant: #ffd262;
     --module_boarder_shadow: 0 1px 1px 0 rgba(66, 66, 66, 0.08), 0 1px 3px 1px rgba(66, 66, 66, 0.16);
+    --alt_surface: #FFFFFF;
+    --alt_on_surface: #000000
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
@@ -21,6 +23,8 @@
 [data-theme="dark"] {
     --surface: #121212;
     --on_surface: #FFFFFF;
+    --alt_surface: #FFFFFF;
+    --alt_on_surface: #000000
     --node_background_opacity: 0.05;
     --field_background_opacity:0.1;
     --module_boarder_shadow: null;
@@ -149,13 +153,13 @@ select{
     border-radius: 5px;
     box-shadow: var(--module_boarder_shadow);
     border: none;
-    background: rgba(var(--node_background_colour), var(--field_background_opacity));
-    /* color: var(--on_surface); */
+    background: var(--alt_surface);
+    color: var(--alt_on_surface);
 }
 
 option {
-    color: var(--on_surface);
-    background-color: rgba(var(--node_background_colour), var(--field_background_opacity));
+    color: var(--alt_on_surface);
+    background-color: var(--alt_surface);
 
 }
 .module-box {

@@ -138,7 +138,7 @@ function buildVisualiser(Node, NodeID) {
 
             c.fillStyle = "#181818";
             c.fillRect(0, 0, canvas.width, canvas.height);
-            c.strokeStyle = "#00ff00";
+            c.strokeStyle = "#f94c57";
             c.beginPath();
             c.moveTo(0, canvas.height / 2);
             c.lineTo(canvas.width, canvas.height / 10);
