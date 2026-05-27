@@ -2,7 +2,7 @@ let activeNodes = {};
 let removeActiveModule;
 let ctx
 
-import { createADSR } from './ADSR.mjs';
+import { createADSR, removeADSR } from './ADSR.mjs';
 
 export function init(Nodes, NodeID, audioCtx, RemActMod) {
     ctx = audioCtx;
@@ -93,9 +93,9 @@ function buildUI(gainNode, NodeID) {
             existingADSR.remove();
             removeADSR(gain.id);
             const gainValue = document.getElementById(gain.id).value;
-            oscillatorGain.gain.value = gainValue;
+            gainNode.gain.value = gainValue;
         } else {
-            createADSR(ctx, oscillatorGain.gain, gain.id, oscilattorControls);
+            createADSR(ctx, gainNode.gain, gain.id, GainControls);
         }
         console.log("ADSR toggled for", gain.id);
         
