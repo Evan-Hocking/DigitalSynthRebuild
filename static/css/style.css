@@ -153,13 +153,13 @@ select{
     border-radius: 5px;
     box-shadow: var(--module_boarder_shadow);
     border: none;
-    background: var(--alt_surface);
-    color: var(--alt_on_surface);
+    /* background: var(--alt_surface);
+    color: var(--alt_on_surface); */
 }
 
 option {
-    color: var(--alt_on_surface);
-    background-color: var(--alt_surface);
+    /* color: var(--alt_on_surface);
+    background-color: var(--alt_surface); */
 
 }
 .module-box {
