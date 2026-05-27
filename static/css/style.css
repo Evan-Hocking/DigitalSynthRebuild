@@ -150,7 +150,7 @@ select{
     box-shadow: var(--module_boarder_shadow);
     border: none;
     background: rgba(var(--node_background_colour), var(--field_background_opacity));
-    color: var(--on_surface);
+    /* color: var(--on_surface); */
 }
 
 option {

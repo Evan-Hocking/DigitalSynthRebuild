@@ -188,25 +188,7 @@ function createMenu() {
                 {
                     label: 'Learn More',
                     click: async () => {
-                        await shell.openExternal('https://electronjs.org')
-                    }
-                },
-                {
-                    label: 'Documentation',
-                    click: async () => {
-                        await shell.openExternal('https://electronjs.org/docs')
-                    }
-                },
-                {
-                    label: 'Community Discussions',
-                    click: async () => {
-                        await shell.openExternal('https://www.electronjs.org/community')
-                    }
-                },
-                {
-                    label: 'Search Issues',
-                    click: async () => {
-                        await shell.openExternal('https://github.com/electron/electron/issues')
+                        await shell.openExternal('https://github.com/Evan-Hocking/DigitalSynthRebuild')
                     }
                 }
             ]

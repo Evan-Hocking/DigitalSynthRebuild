@@ -72,6 +72,7 @@ function buildUI(NodeID) {
 
     var gainEnvelopeBtn = document.createElement('button');
     gainEnvelopeBtn.innerHTML = "Toggle ADSR";
+    gainEnvelopeBtn.id = gain.id + '-ADSR-Toggle'
     gainEnvelopeBtn.addEventListener('click', function (event) {
         const existingADSR = document.getElementById(gain.id + '-ADSR-Controls');
         if (existingADSR) {

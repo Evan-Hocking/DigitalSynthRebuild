@@ -78,8 +78,9 @@ export function createADSR(ctx, audioParam, NodeID, UIContainer) {
         ADSRControls.appendChild(release);
 
 
-
-        UIContainer.appendChild(ADSRControls);
+        var toggleADSR = document.getElementById(NodeID + '-ADSR-Toggle');
+        toggleADSR.before(ADSRControls);
+        // UIContainer.appendChild(ADSRControls);
     }
 
     function init(NodeID) {
