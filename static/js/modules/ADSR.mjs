@@ -20,6 +20,12 @@ export function createADSR(ctx, audioParam, NodeID, UIContainer) {
         base.max = 100;
         base.value = 0;
         ADSRControls.appendChild(base);
+        base.addEventListener('input', function (event) {
+            const baseModifer = 100; //divides result to keep gain in an appropriate range, can be configured to change the maximum possible gain -> MaxGain = 100/gainModifier
+            const baseValue = event.target.value / baseModifer;
+            audioParam.setValueAtTime(baseValue, ctx.currentTime);
+            base.blur()
+        });
 
         //attack slider
         var attackLabel = document.createElement('label');
@@ -92,13 +98,13 @@ export function createADSR(ctx, audioParam, NodeID, UIContainer) {
                 NodeID = key;
                 audioParam = activeEnvelopes[key];
 
-                var paramvalue = document.getElementById(NodeID).value/100;
+                var paramvalue = document.getElementById(NodeID).value / 100;
 
 
 
-                var attack = document.getElementById(NodeID + '-ADSR-attack').value/20;
-                var decay = document.getElementById(NodeID + '-ADSR-decay').value/20;
-                var sustain = document.getElementById(NodeID + '-ADSR-sustain').value/100;
+                var attack = document.getElementById(NodeID + '-ADSR-attack').value / 20;
+                var decay = document.getElementById(NodeID + '-ADSR-decay').value / 20;
+                var sustain = document.getElementById(NodeID + '-ADSR-sustain').value / 100;
 
                 var now = ctx.currentTime;
 
@@ -107,7 +113,7 @@ export function createADSR(ctx, audioParam, NodeID, UIContainer) {
                 audioParam.linearRampToValueAtTime(audioParam.value, now);
                 audioParam.linearRampToValueAtTime(paramvalue, now + attack);
                 audioParam.linearRampToValueAtTime(sustain * paramvalue, now + attack + decay);
-                
+
             }
         });
 
@@ -116,9 +122,9 @@ export function createADSR(ctx, audioParam, NodeID, UIContainer) {
         document.addEventListener("noteUp", (e) => {
             for (let key in activeEnvelopes) {
                 NodeID = key;
-                var paramvalue = document.getElementById(NodeID).value/100;
-                var start = document.getElementById(NodeID + '-ADSR-base').value/100;
-                var release = document.getElementById(NodeID + '-ADSR-release').value/20;
+                var paramvalue = document.getElementById(NodeID).value / 100;
+                var start = document.getElementById(NodeID + '-ADSR-base').value / 100;
+                var release = document.getElementById(NodeID + '-ADSR-release').value / 20;
                 audioParam.cancelScheduledValues(ctx.currentTime);
                 audioParam.linearRampToValueAtTime(audioParam.value, ctx.currentTime);
                 audioParam.linearRampToValueAtTime(paramvalue * start, ctx.currentTime + release);
