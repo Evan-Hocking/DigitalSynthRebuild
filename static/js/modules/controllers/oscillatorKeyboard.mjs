@@ -72,6 +72,7 @@ function buildUI(NodeID) {
 
     var gainEnvelopeBtn = document.createElement('button');
     gainEnvelopeBtn.innerHTML = "Toggle ADSR";
+    gainEnvelopeBtn.id = gain.id + '-ADSR-Toggle'
     gainEnvelopeBtn.addEventListener('click', function (event) {
         const existingADSR = document.getElementById(gain.id + '-ADSR-Controls');
         if (existingADSR) {
@@ -82,7 +83,7 @@ function buildUI(NodeID) {
             createADSR(ctx, oscillatorGain.gain, gain.id, oscilattorControls);
         }
         console.log("ADSR toggled for", gain.id);
-        oscilattorControls.appendChild(gainEnvelopeBtn);
+        
     })
     oscilattorControls.appendChild(gainEnvelopeBtn);
 
@@ -195,6 +196,7 @@ function createKey(keyClass, note, computerKey, NodeID) {
 function listenForKeyDown(targetKey, note, callback) {
     document.addEventListener('keydown', function handler(event) {
         if (event.key.toLowerCase() === targetKey.toLowerCase()) {
+            event.preventDefault();
             if (!activeKeys.has(targetKey)) {
                 activeKeys.set(targetKey, note)
                 callback(event)
@@ -205,6 +207,7 @@ function listenForKeyDown(targetKey, note, callback) {
 function listenForKeyUp(targetKey, note, callback) {
     document.addEventListener('keyup', function handler(event) {
         if (event.key.toLowerCase() === targetKey.toLowerCase()) {
+            event.preventDefault();
             if (activeKeys.has(targetKey)) {
                 activeKeys.delete(targetKey);
                 callback(event)

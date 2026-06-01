@@ -96,6 +96,8 @@ function buildControlUI(Node, NodeID) {
     remove.addEventListener('click', function (event) {
         NodeControls.remove()
         removeActiveModule(NodeID)
+        document.getElementById(NodeID + "-Canvas").remove()
+        
     })
     NodeControls.appendChild(remove)
 
@@ -108,7 +110,7 @@ function buildVisualiser(Node, NodeID) {
     Node.fftSize = 2048;
     const dataArray = new Uint8Array(Node.frequencyBinCount);
     const canvas = document.createElement("canvas")
-    canvas.id = NodeID+"Canvas"
+    canvas.id = NodeID + "-Canvas"
     var canvasContainer = document.getElementById("canvas")
     canvasContainer.appendChild(canvas)
     // document.addEventListener("DOMContentLoaded", function () {
@@ -136,7 +138,7 @@ function buildVisualiser(Node, NodeID) {
 
             c.fillStyle = "#181818";
             c.fillRect(0, 0, canvas.width, canvas.height);
-            c.strokeStyle = "#00ff00";
+            c.strokeStyle = "#f94c57";
             c.beginPath();
             c.moveTo(0, canvas.height / 2);
             c.lineTo(canvas.width, canvas.height / 10);

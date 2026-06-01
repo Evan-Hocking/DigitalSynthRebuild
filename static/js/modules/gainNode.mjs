@@ -2,7 +2,7 @@ let activeNodes = {};
 let removeActiveModule;
 let ctx
 
-import { createADSR } from './ADSR.mjs';
+import { createADSR, removeADSR } from './ADSR.mjs';
 
 export function init(Nodes, NodeID, audioCtx, RemActMod) {
     ctx = audioCtx;
@@ -64,41 +64,44 @@ function buildUI(gainNode, NodeID) {
     gain.value = 50;
     GainControls.appendChild(gain);
     gain.addEventListener('input', function (event) {
-        if (!isADSREnabled(this.id)) {
-            setGainValue(event)
+        const existingADSR = document.getElementById(gain.id + '-ADSR-Controls');
+        if (existingADSR) {
+            const gainModifer = 100; //divides result to keep gain in an appropriate range, can be configured to change the maximum possible gain -> MaxGain = 100/gainModifier
+            const gainValue = event.target.value / gainModifer;
+            gainNode.gain.setValueAtTime(gainValue, ctx.currentTime);
+            gain.blur()
         }
 
     });
 
-    function setGainValue(event) {
 
-        const gainModifer = 100; //divides result to keep gain in an appropriate range, can be configured to change the maximum possible gain -> MaxGain = 100/gainModifier
-        const gainValue = event.target.value / gainModifer;
-        gainNode.gain.setValueAtTime(gainValue, ctx.currentTime);
-        gain.blur()
-    }
 
     var gainLabel = document.createElement('label');
     gainLabel.innerHTML = 'Gain';
     gainLabel.setAttribute('for', 'gain');
     GainControls.appendChild(gainLabel);
-    
+
     function isADSREnabled(NodeID) {
         const existingADSR = document.getElementById(NodeID + '-ADSR');
         return !!existingADSR;
     }
     var gainEnvelopeBtn = document.createElement('button');
     gainEnvelopeBtn.innerHTML = "Toggle ADSR";
+    gainEnvelopeBtn.id = gain.id + '-ADSR-Toggle'
     gainEnvelopeBtn.addEventListener('click', function (event) {
-        const existingADSR = document.getElementById(gainNode.id + '-ADSR-Controls');
+        const existingADSR = document.getElementById(gain.id + '-ADSR-Controls');
         if (existingADSR) {
             existingADSR.remove();
-            setGainValue({ target: { value: gain.value } });
+            removeADSR(gain.id);
+            const gainValue = document.getElementById(gain.id).value;
+            gainNode.gain.value = gainValue;
         } else {
-            createADSR(ctx, gainNode.gain, gainNode.id, GainControls);
+            createADSR(ctx, gainNode.gain, gain.id, GainControls);
         }
-        GainControls.appendChild(gainEnvelopeBtn);
+        console.log("ADSR toggled for", gain.id);
+        
     })
+
     GainControls.appendChild(gainEnvelopeBtn);
 
 

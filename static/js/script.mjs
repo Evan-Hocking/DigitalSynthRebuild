@@ -13,11 +13,7 @@ window.electronAPI.onThemeChanged((_event, theme) => {
 });
 
 const moduleDictionary = {};
-const activeModules = {
-    'Output': {
-        'node': ctx.destination
-    }
-};
+const activeModules = {};
 
 function init() {
     async function refreshModules() {
