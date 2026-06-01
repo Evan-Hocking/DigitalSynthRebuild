@@ -55,13 +55,14 @@ function buildUI(Node, NodeID) {
     NodeControls.appendChild(moduleTitle);
 
     var freq = document.createElement('input');
+    var sampleRate = ctx.sampleRate;
     freq.classList.add("vertical-slider")
     freq.setAttribute('orient', 'vertical');
     freq.type = 'range';
     freq.id = NodeID + '-freq';
     freq.min = 0;
-    freq.max = 100;
-    freq.value = 50;
+    freq.max = sampleRate/8;
+    freq.value = sampleRate/32;
     NodeControls.appendChild(freq);
     freq.addEventListener('input', function (event) {
         const existingADSR = document.getElementById(freq.id + '-ADSR-Controls');
@@ -108,8 +109,8 @@ function buildUI(Node, NodeID) {
     Resonance.type = 'range';
     Resonance.id = NodeID + '-Resonance';
     Resonance.min = 0;
-    Resonance.max = 100;
-    Resonance.value = 50;
+    Resonance.max = 10;
+    Resonance.value = 1;
     NodeControls.appendChild(Resonance);
     Resonance.addEventListener('input', function (event) {
         const existingADSR = document.getElementById(Resonance.id + '-ADSR-Controls');
