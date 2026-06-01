@@ -60,17 +60,18 @@ function buildUI(Node, NodeID) {
     freq.setAttribute('orient', 'vertical');
     freq.type = 'range';
     freq.id = NodeID + '-freq';
-    freq.min = 0;
-    freq.max = sampleRate/8;
+    freq.min = 20;
+    freq.max = sampleRate/16;
     freq.value = sampleRate/32;
     NodeControls.appendChild(freq);
     freq.addEventListener('input', function (event) {
         const existingADSR = document.getElementById(freq.id + '-ADSR-Controls');
-        if (existingADSR) {
+        if (!existingADSR) {
             const freqModifer = 100; 
-            const freqValue = event.target.value / freqModifer;
-            Node.frequency.setValueAtTime(freqValue, ctx.currentTime);
+            const freqValue = event.target.value;
+            Node.frequency.value = freqValue;
             freq.blur()
+            console.log("Frequency changed to", Node.frequency.value);
         }
 
     });
@@ -109,16 +110,17 @@ function buildUI(Node, NodeID) {
     Resonance.type = 'range';
     Resonance.id = NodeID + '-Resonance';
     Resonance.min = 0;
-    Resonance.max = 10;
+    Resonance.max = 100;
     Resonance.value = 1;
     NodeControls.appendChild(Resonance);
     Resonance.addEventListener('input', function (event) {
         const existingADSR = document.getElementById(Resonance.id + '-ADSR-Controls');
-        if (existingADSR) {
-            const ResonanceModifer = 100;
-            const ResonanceValue = event.target.value / ResonanceModifer;
-            Node.Q.setValueAtTime(ResonanceValue, ctx.currentTime);
+        if (!existingADSR) {
+            const ResonanceModifer = 10;
+            const ResonanceValue = event.target.value/ResonanceModifer;
+            Node.Q.value = ResonanceValue;
             Resonance.blur()
+            console.log("Resonance changed to", Node.Q.value);
         }
 
     });

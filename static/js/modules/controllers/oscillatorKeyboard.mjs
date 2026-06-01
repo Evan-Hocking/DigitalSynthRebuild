@@ -196,6 +196,7 @@ function createKey(keyClass, note, computerKey, NodeID) {
 function listenForKeyDown(targetKey, note, callback) {
     document.addEventListener('keydown', function handler(event) {
         if (event.key.toLowerCase() === targetKey.toLowerCase()) {
+            event.preventDefault();
             if (!activeKeys.has(targetKey)) {
                 activeKeys.set(targetKey, note)
                 callback(event)
@@ -206,6 +207,7 @@ function listenForKeyDown(targetKey, note, callback) {
 function listenForKeyUp(targetKey, note, callback) {
     document.addEventListener('keyup', function handler(event) {
         if (event.key.toLowerCase() === targetKey.toLowerCase()) {
+            event.preventDefault();
             if (activeKeys.has(targetKey)) {
                 activeKeys.delete(targetKey);
                 callback(event)
